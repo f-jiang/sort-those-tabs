@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 
+import { SortablejsModule } from 'angular-sortablejs';
+
 @NgModule({
   declarations: [
     AppComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    SortablejsModule.forRoot({})
   ],
   providers: [],
   bootstrap: [AppComponent]
