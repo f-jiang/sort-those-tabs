@@ -5,11 +5,13 @@ import { AppComponent } from './app.component';
 import { SessionComponent } from './session/session.component';
 
 import { SortablejsModule } from 'angular-sortablejs';
+import { WindowComponent } from './window/window.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SessionComponent
+    SessionComponent,
+    WindowComponent
   ],
   imports: [
     BrowserModule,
