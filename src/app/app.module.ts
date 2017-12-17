@@ -7,6 +7,8 @@ import { SessionComponent } from './session/session.component';
 import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -15,6 +17,7 @@ import { WindowComponent } from './window/window.component';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     SortablejsModule.forRoot({})
   ],
   providers: [],
