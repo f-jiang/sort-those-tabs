@@ -1,3 +1,7 @@
 <mat-grid-list cols="3" rowHeight="4:3">
-  <!--one window component per item in the windows array-->
+  <!--*ngFor="<each window in the current session>"-->
+  <mat-grid-tile>
+    <!--window input binding-->
+    <app-window></app-window>
+  </mat-grid-tile>
 </mat-grid-list>
