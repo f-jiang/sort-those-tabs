@@ -9,7 +9,7 @@ import { WindowComponent } from './window/window.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatToolbarModule } from '@angular/material';
+import { MatToolbarModule, MatGridListModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,8 @@ import { MatToolbarModule } from '@angular/material';
     BrowserModule,
     BrowserAnimationsModule,
     SortablejsModule.forRoot({}),
-    MatToolbarModule
+    MatToolbarModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
