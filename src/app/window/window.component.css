@@ -4,6 +4,22 @@
 }
 
 #inner-card {
-  width: calc(100% - 70px);
-  height: calc(100% - 70px);
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
+}
+
+.tab-screenshot {
+  max-height: 100%;
+  width: auto;
+  display: block;
+  margin: auto;
+}
+
+mat-card {
+  padding: 0px;
+  background-color: #fafafa;
+}
+
+mat-card-header {
+  background-color: #f2f2f2;
 }

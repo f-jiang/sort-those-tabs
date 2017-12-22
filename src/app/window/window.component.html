@@ -1,28 +1,30 @@
 <mat-card id="root-card">
-  <!--EXAMPLE: https://stackoverflow.com/questions/46690710/angular-material-how-to-create-floating-card-toolbar-layout-->
-
   <!--header-body design example: angular material component sample containers-->
 
-  <!--shaded header: light grey-->
   <mat-card-header>
-    <!--button for closing window-->
+    <span class="spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-card-header>
 
-  <!--rest of the card: lighter grey-->
   <mat-grid-list cols="3" rowHeight="5:4">
     <!--*ngFor="<each tab screenshot>"-->
     <mat-grid-tile>
       <mat-card id="inner-card">
         <mat-card-header>
           <!--page name and favicon-->
-          <mat-card-title></mat-card-title>
+          <mat-card-title class="tab-title">test</mat-card-title>
 
-          <!--empty space to be used as a "handle" for the tab-->
+          <span class="spacer"></span>
 
-          <!--button for closing tab-->
+          <!--mini icon button that shows on hover-->
+          <button mat-icon-button>
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-card-header>
 
-        <!--<img mat-card-image src="">-->
+        <!--<img mat-card-image class="tab-screenshot">-->
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>

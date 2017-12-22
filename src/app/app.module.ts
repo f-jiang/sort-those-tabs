@@ -9,7 +9,7 @@ import { WindowComponent } from './window/window.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule } from '@angular/material';
+import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,8 @@ import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule } f
     MatToolbarModule,
     MatGridListModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
