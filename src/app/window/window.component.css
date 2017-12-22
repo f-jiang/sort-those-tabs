@@ -1,0 +1,9 @@
+#root-card {
+  width: 87%;
+  height: 83%;
+}
+
+#inner-card {
+  width: calc(100% - 70px);
+  height: calc(100% - 70px);
+}
