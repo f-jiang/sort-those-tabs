@@ -11,6 +11,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
 
+import { WindowsService } from './windows.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,14 +22,16 @@ import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule, Ma
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    SortablejsModule.forRoot({}),
+    SortablejsModule.forRoot({ group: 'browser-editedWindows' }),
     MatToolbarModule,
     MatGridListModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule
   ],
-  providers: [],
+  providers: [
+    WindowsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

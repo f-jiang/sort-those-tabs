@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { WindowsService } from '../windows.service';
 
 @Component({
   selector: 'app-session',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SessionComponent implements OnInit {
 
-  constructor() { }
+  data: chrome.windows.Window[];
+
+  constructor(private windowsService: WindowsService) {
+    this.data = windowsService.editedWindows;
+  }
 
   ngOnInit() {
   }

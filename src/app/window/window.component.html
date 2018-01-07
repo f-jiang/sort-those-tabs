@@ -10,11 +10,11 @@
 
   <mat-grid-list cols="3" rowHeight="5:4">
     <!--*ngFor="<each tab screenshot>"-->
-    <mat-grid-tile>
+    <mat-grid-tile *ngFor="let tab of data.tabs">
       <mat-card id="inner-card">
         <mat-card-header>
           <!--page name and favicon-->
-          <mat-card-title class="tab-title">test</mat-card-title>
+          <mat-card-title class="tab-title">{{ tab.title }}</mat-card-title>
 
           <span class="spacer"></span>
 
@@ -25,6 +25,7 @@
         </mat-card-header>
 
         <!--show tab favicon-->
+        <img src="{{ tab.favIconUrl }}">
       </mat-card>
     </mat-grid-tile>
   </mat-grid-list>
