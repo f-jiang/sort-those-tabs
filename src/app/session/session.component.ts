@@ -10,11 +10,12 @@ export class SessionComponent implements OnInit {
 
   data: chrome.windows.Window[];
 
-  constructor(private windowsService: WindowsService) {
-    this.data = windowsService.editedWindows;
-  }
+  constructor(private windowsService: WindowsService) { }
 
   ngOnInit() {
+    this.windowsService.windowsPromise.then((windows: chrome.windows.Window[]) => {
+      this.data = windows;
+    });
   }
 
 }

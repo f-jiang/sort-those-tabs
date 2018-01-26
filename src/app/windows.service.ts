@@ -2,24 +2,28 @@
 
 import { Injectable } from '@angular/core';
 
+function getCopy(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 @Injectable()
 export class WindowsService {
 
-  private currentWindows: chrome.windows.Window[];
-  public editedWindows: chrome.windows.Window[];
+  public windowsPromise: Promise<chrome.windows.Window[]>;
+
+  private windowsData: chrome.windows.Window[];
 
   constructor() {
-    this.loadCurrentWindows();
-  }
+    this.windowsPromise = new Promise<chrome.windows.Window[]>((resolve: (windows: chrome.windows.Window[]) => void) => {
+      chrome.windows.getAll({'populate': true}, resolve);
+    });
 
-  loadCurrentWindows(): void {
-    chrome.windows.getAll({ 'populate': true }, (windows: chrome.windows.Window[]) => {
-      // Recursively deep-copy windows
-      this.currentWindows = this.editedWindows = JSON.parse(JSON.stringify(windows));
+    this.windowsPromise.then((windows: chrome.windows.Window[]) => {
+      this.windowsData = getCopy(windows);
     });
   }
 
-  applyEditedWindows(): void {
+  applyEditedWindows(editedWindows: chrome.windows.Window[]): void {
     // later:
     // TODO: get differences between current and edited windows and modify tabs accordingly
     // TODO: if chrome api updates successful, set currentWindows = editedWindows
@@ -28,7 +32,7 @@ export class WindowsService {
       chrome.tabs.getCurrent((extensionTab: chrome.tabs.Tab) => {
         // Close the currently opened windows. If the window contains the extension tab, leave the extension tab open
         // but close the rest.
-        for (const window of this.currentWindows) {
+        for (const window of this.windowsData) {
           if (window.id !== currentWindow.id) {
             chrome.windows.remove(window.id);
           } else {
@@ -47,7 +51,7 @@ export class WindowsService {
         // Open the windows in this.editedWindows. If the edited window doesn't contain the extension tab, open it
         // while retaining its state, size, and position. Otherwise, open the rest of the tabs in a new window separate
         // from the one containing the extension.
-        for (const window of this.editedWindows) {
+        for (const window of editedWindows) {
           const createData: { [k: string]: any } = {
             type: window.type,
             state: window.state
@@ -73,14 +77,9 @@ export class WindowsService {
           chrome.windows.create(createData);
         }
 
-        this.loadCurrentWindows();
+        this.windowsData = getCopy(editedWindows);
       });
     });
-  }
-
-  resetEditedWindows(): void {
-    // Recursively deep-copy this.currentWindows
-    this.editedWindows = JSON.parse(JSON.stringify(this.currentWindows));
   }
 
 }
