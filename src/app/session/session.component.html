@@ -1,5 +1,5 @@
-<mat-grid-list cols="3" rowHeight="4:3">
-  <mat-grid-tile *ngFor="let window of data">
+<div class="window-grid">
+  <div class="window-box" *ngFor="let window of data">
     <app-window [data]="window"></app-window>
-  </mat-grid-tile>
-</mat-grid-list>
+  </div>
+</div>

@@ -1,4 +1,10 @@
-app-window {
-  width: calc(100% - 10px);
-  height: calc(100% - 10px);
+.window-grid {
+  display: grid;
+
+  /* TODO size based on screen size*/
+  grid-template-columns: 400px 400px 400px;
+  grid-gap: 10px;
+
+  background-color: #ffffff;
+  color: #444444;
 }

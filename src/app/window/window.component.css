@@ -1,25 +1,18 @@
-#root-card {
-  width: 87%;
-  height: 83%;
+.tab-grid {
+  display: grid;
+
+  /* TODO size based on screen size*/
+  grid-template-columns: 100px 100px 100px;
+  grid-gap: 10px;
+
+  background-color: #ffffff;
+  color: #444444;
 }
 
-#inner-card {
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
-}
-
-.tab-screenshot {
-  max-height: 100%;
-  width: auto;
-  display: block;
-  margin: auto;
-}
-
-mat-card {
-  padding: 0px;
-  background-color: #fafafa;
-}
-
-mat-card-header {
-  background-color: #f2f2f2;
+.tab-box {
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
 }
