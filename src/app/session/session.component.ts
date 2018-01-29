@@ -1,3 +1,5 @@
+/// <reference types="chrome"/>
+
 import { Component, OnInit } from '@angular/core';
 import { WindowsService } from '../windows.service';
 

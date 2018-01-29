@@ -1,3 +1,5 @@
+/// <reference types="chrome"/>
+
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
