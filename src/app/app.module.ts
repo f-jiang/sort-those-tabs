@@ -7,10 +7,6 @@ import { SessionComponent } from './session/session.component';
 import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import { MatToolbarModule, MatGridListModule, MatCardModule, MatButtonModule, MatIconModule } from '@angular/material';
-
 import { WindowsService } from './windows.service';
 
 @NgModule({
@@ -21,13 +17,7 @@ import { WindowsService } from './windows.service';
   ],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
-    SortablejsModule.forRoot({ group: 'browser-editedWindows' }),
-    MatToolbarModule,
-    MatGridListModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
+    SortablejsModule.forRoot({ group: 'browser-editedWindows' })
   ],
   providers: [
     WindowsService
