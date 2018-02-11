@@ -1,10 +1,7 @@
 /// <reference types="chrome"/>
 
 import { Injectable } from '@angular/core';
-
-function getCopy(obj: any) {
-  return JSON.parse(JSON.stringify(obj));
-}
+import { getCopy } from './utils';
 
 @Injectable()
 export class WindowsService {
