@@ -2,6 +2,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { WindowsService } from '../windows.service';
+import { getCopy } from '../utils';
 
 @Component({
   selector: 'app-session',
@@ -16,7 +17,7 @@ export class SessionComponent implements OnInit {
 
   ngOnInit() {
     this.windowsService.windowsPromise.then((windows: chrome.windows.Window[]) => {
-      this.data = windows;
+      this.data = getCopy(windows);
     });
   }
 
