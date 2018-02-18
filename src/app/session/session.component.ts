@@ -21,4 +21,12 @@ export class SessionComponent implements OnInit {
     });
   }
 
+  resetChanges(): void {
+    this.data = this.windowsService.windowsData;
+  }
+
+  applyChanges(): void {
+    this.windowsService.applyEditedWindows(this.data);
+  }
+
 }

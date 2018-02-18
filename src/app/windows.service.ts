@@ -8,7 +8,7 @@ export class WindowsService {
 
   public windowsPromise: Promise<chrome.windows.Window[]>;
 
-  private windowsData: chrome.windows.Window[];
+  private _windowsData: chrome.windows.Window[];
 
   constructor() {
     this.windowsPromise = new Promise<chrome.windows.Window[]>((resolve: (windows: chrome.windows.Window[]) => void) => {
@@ -16,8 +16,11 @@ export class WindowsService {
     });
 
     this.windowsPromise.then((windows: chrome.windows.Window[]) => {
-      this.windowsData = getCopy(windows);
+      this._windowsData = getCopy(windows);
     });
+
+  get windowsData(): chrome.windows.Window[] {
+    return getCopy(this._windowsData);
   }
 
   applyEditedWindows(editedWindows: chrome.windows.Window[]): void {
@@ -29,7 +32,7 @@ export class WindowsService {
       chrome.tabs.getCurrent((extensionTab: chrome.tabs.Tab) => {
         // Close the currently opened windows. If the window contains the extension tab, leave the extension tab open
         // but close the rest.
-        for (const window of this.windowsData) {
+        for (const window of this._windowsData) {
           if (window.id !== currentWindow.id) {
             chrome.windows.remove(window.id);
           } else {
@@ -75,7 +78,7 @@ export class WindowsService {
           chrome.windows.create(createData);
         }
 
-        this.windowsData = getCopy(editedWindows);
+        this._windowsData = getCopy(editedWindows);
       });
     });
   }
