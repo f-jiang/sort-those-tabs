@@ -25,7 +25,7 @@ export class WindowsService {
     // TODO: get differences between current and edited windows and modify tabs accordingly
     // TODO: if chrome api updates successful, set currentWindows = editedWindows
 
-    chrome.windows.getCurrent({ 'populate': false }, (currentWindow: chrome.windows.Window) => {
+    chrome.windows.getCurrent({ 'populate': true }, (currentWindow: chrome.windows.Window) => {
       chrome.tabs.getCurrent((extensionTab: chrome.tabs.Tab) => {
         // Close the currently opened windows. If the window contains the extension tab, leave the extension tab open
         // but close the rest.
@@ -61,15 +61,16 @@ export class WindowsService {
             createData.top = window.top;
           }
 
-          const tabIds = [];
-
-          for (const tab of window.tabs) {
-            if (tab.id !== extensionTab.id) {
-              tabIds.push(tab.id);
+          if (window.tabs.length === 1) {
+            createData.url = window.tabs[0].url;
+          } else {
+            createData.url = [];
+            for (const tab of window.tabs) {
+              if (tab.id !== extensionTab.id) {
+                createData.url.push(tab.url);
+              }
             }
           }
-
-          createData.url = (tabIds.length > 1) ? tabIds : tabIds[0];
 
           chrome.windows.create(createData);
         }
