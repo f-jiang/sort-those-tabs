@@ -21,10 +21,8 @@
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
     "@types/chrome": "0.0.56",
-    "angular-sortablejs": "^2.3.0",
     "core-js": "^2.4.1",
     "rxjs": "^5.4.2",
-    "sortablejs": "^1.7.0",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
