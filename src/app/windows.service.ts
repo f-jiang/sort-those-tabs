@@ -18,6 +18,7 @@ export class WindowsService {
     this.windowsPromise.then((windows: chrome.windows.Window[]) => {
       this._windowsData = getCopy(windows);
     });
+  }
 
   get windowsData(): chrome.windows.Window[] {
     return getCopy(this._windowsData);

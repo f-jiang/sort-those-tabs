@@ -1,5 +1,5 @@
 <div>
-  <div class="tab-grid">
+  <div class="tab-grid" [sortablejs]="data.tabs">
     <div class="tab-box" *ngFor="let tab of data.tabs">
       {{ tab.title }}
     </div>

@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { SessionComponent } from './session/session.component';
 
+import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
 
 import { WindowsService } from './windows.service';
@@ -15,7 +16,11 @@ import { WindowsService } from './windows.service';
     WindowComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    SortablejsModule.forRoot({
+      group: 'browser-editedWindows',
+      animation: 300
+    })
   ],
   providers: [
     WindowsService
