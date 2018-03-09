@@ -25,8 +25,8 @@ export class SessionComponent implements OnInit {
     this.data = this.windowsService.windowsData;
   }
 
-  applyChanges(): void {
-    this.windowsService.applyEditedWindows(this.data);
+  async applyChanges(): Promise<void> {
+    await this.windowsService.applyEditedWindows(this.data);
   }
 
 }

@@ -3,6 +3,10 @@
 import { Injectable } from '@angular/core';
 import { getCopy } from './utils';
 
+import ChromePromise from 'chrome-promise';
+
+const chromep: ChromePromise = new ChromePromise();
+
 @Injectable()
 export class WindowsService {
 
@@ -24,64 +28,156 @@ export class WindowsService {
     return getCopy(this._windowsData);
   }
 
-  applyEditedWindows(editedWindows: chrome.windows.Window[]): void {
-    // later:
-    // TODO: get differences between current and edited windows and modify tabs accordingly
-    // TODO: if chrome api updates successful, set currentWindows = editedWindows
+  async applyEditedWindows(editedWindows: chrome.windows.Window[]): Promise<void> {
+    /**
+     * scenarios:
+     * - 1: |editedWindows| and |_windowsData| have the same windows (no windows created or removed)
+     * - 2: |editedWindows| has some windows that |_windowsData| doesn't (windows created by detaching one or more tabs)
+     * - 3: |_windowsData| has some windows that |editedWindows| doesn't (windows removed)
+     * - 4: both scenarios 2 and 3
+     *
+     * steps:
+     * - categorize windows into 3 separate arrays of window ids:
+     *   - windows in |editedWindows| but not in |_windowsData|: new windows that have been detached
+     *   - windows in both |editedWindows| and |_windowsData|
+     *   - windows in |_windowsData| but not in |editedWindows|: windows that got removed via the extension
+     *
+     * (not supported yet due to drag and drop restrictions)
+     * - for window in |editedWindows| but not in |_windowsData|: new windows that have been detached
+     *   - look in |_windowsData| for the tab(s) contained in the new, detached window, and detach it/them into a new window
+     *
+     * - for each window in both |editedWindows| and |_windowsData|:
+     *   - get list of tabs that are in the edited window but not in the original window
+     *     - look for each missing tab in the other windows of |_windowsData|
+     * - for each window in both |editedWindows| and |_windowsData|:
+     *   - get list of tabs that are in the original window but not in the edited window
+     *     - remove each of these tabs
+     *
+     * - for each window in |_windowsData| but not in |editedWindows|:
+     *   - remove
+     *
+     * - if necessary: sort tabs within each window using insertion-style sort
+     */
 
-    chrome.windows.getCurrent({ 'populate': true }, (currentWindow: chrome.windows.Window) => {
-      chrome.tabs.getCurrent((extensionTab: chrome.tabs.Tab) => {
-        // Close the currently opened windows. If the window contains the extension tab, leave the extension tab open
-        // but close the rest.
-        for (const window of this._windowsData) {
-          if (window.id !== currentWindow.id) {
-            chrome.windows.remove(window.id);
-          } else {
-            const tabIds = [];
+    const originalWindowIds: Set<number> = new Set(this._windowsData.map(win => win.id));
+    const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
 
-            for (const tab of currentWindow.tabs) {
-              if (tab.id !== extensionTab.id) {
-                tabIds.push(tab.id);
-              }
-            }
+    // TODO could probably get rid of ID sets
+    // found in |editedWindows| only
+    const newWindows_ids: Set<number> = new Set(Array.from(editedWindowIds)
+      .filter(winId => !originalWindowIds.has(winId)));
+    // found in both |editedWindows| and |this._windowsData|
+    const windowsInCommon_ids: Set<number> = new Set(Array.from(editedWindowIds)
+      .filter(winId => originalWindowIds.has(winId)));
+    // found in |this._windowsData| only
+    const windowsToRemove_ids: Set<number> = new Set(Array.from(originalWindowIds)
+      .filter(winId => !editedWindowIds.has(winId)));
 
-            chrome.tabs.remove(tabIds);
+    const newWindows: chrome.windows.Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
+
+    // 1. create the windows consisting of detached tabs
+
+    for (const newWindow of newWindows) {
+      const tabsToDetach_ids: number[] = newWindow.tabs.map(tab => tab.id);
+      const result: chrome.windows.Window = await chromep.windows.create({ tabId: tabsToDetach_ids[0] });
+
+      // move additional detached tabs to new window
+      if (tabsToDetach_ids.length > 1) {
+        await chromep.tabs.move(tabsToDetach_ids.slice(1, tabsToDetach_ids.length), {windowId: result.id, index: -1});
+      }
+    }
+
+    // 2. rearrange pre-existing windows' tabs
+
+    // original and edited states of pre-existing windows that weren't closed via extension
+    const windowsInCommon_original: chrome.windows.Window[] = this._windowsData
+      .filter(win => windowsInCommon_ids.has(win.id));
+    const windowsInCommon_edited: chrome.windows.Window[] = editedWindows
+      .filter(win => windowsInCommon_ids.has(win.id));
+
+    // maps of above windows' tab id arrays; key = windowId, value = set of tab ids
+    const windowsInCommon_tabIds_original: { [windowId: number]: Set<number> } = { };
+    const windowsInCommon_tabIds_edited: { [windowId: number]: Set<number> } = { };
+
+    // populate tab id maps
+
+    for (const window of windowsInCommon_original) {
+      windowsInCommon_tabIds_original[window.id] = new Set(window.tabs.map(tab => tab.id));
+    }
+
+    for (const window of windowsInCommon_edited) {
+      windowsInCommon_tabIds_edited[window.id] = new Set(window.tabs.map(tab => tab.id));
+    }
+
+    // ids of all detached tabs; used to differentiate between two types of tabs missing from edited windows: those
+    // that were closed, and those that were detached
+    const detachedTabIds: Set<number> = new Set();
+
+    // populate detached tab id set
+    for (const window of newWindows) {
+      for (const tab of window.tabs) {
+        detachedTabIds.add(tab.id);
+      }
+    }
+
+    for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
+      // set of ids of tabs present in the window, before and after modification
+      const originalTabIds: Set<number> = windowsInCommon_tabIds_original[windowInCommon_id];
+      const editedTabIds: Set<number> = windowsInCommon_tabIds_edited[windowInCommon_id];
+
+      // remove tabs that got closed by the user via the extension
+
+      const tabsToRemove_ids: number[] = Array.from(originalTabIds)
+        .filter(id => !editedTabIds.has(id) && !detachedTabIds.has(id));
+      await chromep.tabs.remove(tabsToRemove_ids);
+
+      // insert into the window, in correct order, tabs that got added by the user via the extension
+
+      const tabsToMove_ids: number[] = Array.from(editedTabIds).filter(id => !originalTabIds.has(id));
+
+      // tabsKeysAfterRemoval contains the indices of the remaining tabs in terms of the tabs' final ordering in
+      // editedTabIds, and is used to help insert the tabsToMove in the correct order
+      const tabIdsAfterRemoval: number[] = Array.from(originalTabIds).filter(id => editedTabIds.has(id));
+      const tabsKeysAfterRemoval: number[] = new Array(tabIdsAfterRemoval.length);
+
+      // populate tab keys
+      for (let i = 0; i < tabsKeysAfterRemoval.length; i++) {
+        tabsKeysAfterRemoval[i] = Array.from(editedTabIds).indexOf(tabIdsAfterRemoval[i]);
+      }
+
+      // move in the tabs in the correct order
+      for (const tabId of tabsToMove_ids) {
+        const key: number = Array.from(editedTabIds).indexOf(tabId);
+
+        for (let i = tabsKeysAfterRemoval.length; i > -1; i--) {
+          let insertionPoint: number;
+
+          if ((i === tabsKeysAfterRemoval.length && key > tabsKeysAfterRemoval[i - 1])  // tab belongs at the end
+            || (i === 0 && key < tabsKeysAfterRemoval[i])                               // tab belongs at the beginning
+            || ((i > 0 && i < tabsKeysAfterRemoval.length)                              // tab belongs somewhere in the middle
+              && (key < tabsKeysAfterRemoval[i] && key > tabsKeysAfterRemoval[i - 1]))
+          ) {
+            insertionPoint = i;
+          }
+
+
+          if (insertionPoint !== undefined) {
+            tabsKeysAfterRemoval.splice(insertionPoint, 0, key);
+            await chromep.tabs.move(tabId, {index: insertionPoint, windowId: windowInCommon_id});
+            break;
           }
         }
+      }
+    }
 
-        // Open the windows in this.editedWindows. If the edited window doesn't contain the extension tab, open it
-        // while retaining its state, size, and position. Otherwise, open the rest of the tabs in a new window separate
-        // from the one containing the extension.
-        for (const window of editedWindows) {
-          const createData: { [k: string]: any } = {
-            type: window.type,
-            state: window.state
-          };
 
-          if (window.state !== 'maximized') {
-            createData.width = window.width;
-            createData.height = window.height;
-            createData.left = window.left;
-            createData.top = window.top;
-          }
+    // 3. remove windows closed by the user via the extension
 
-          if (window.tabs.length === 1) {
-            createData.url = window.tabs[0].url;
-          } else {
-            createData.url = [];
-            for (const tab of window.tabs) {
-              if (tab.id !== extensionTab.id) {
-                createData.url.push(tab.url);
-              }
-            }
-          }
+    for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
+      await chromep.windows.remove(windowToRemove_id);
+    }
 
-          chrome.windows.create(createData);
-        }
-
-        this._windowsData = getCopy(editedWindows);
-      });
-    });
+    // TODO update this._windowsData
   }
 
 }
