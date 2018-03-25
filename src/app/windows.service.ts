@@ -109,67 +109,80 @@ export class WindowsService {
       windowsInCommon_tabIds_edited[window.id] = new Set(window.tabs.map(tab => tab.id));
     }
 
-    // ids of all detached tabs; used to differentiate between two types of tabs missing from edited windows: those
-    // that were closed, and those that were detached
-    const detachedTabIds: Set<number> = new Set();
-
-    // populate detached tab id set
-    for (const window of newWindows) {
-      for (const tab of window.tabs) {
-        detachedTabIds.add(tab.id);
-      }
-    }
+    // if a certain window has all its original tabs moved to other windows via the extension, a temporary tab will be
+    // created in that window. this way, the window will stay open so that incoming tabs can still be transferred
+    // properly. the id of the temporary tab is stored in the following array so that the tab can be closed after all
+    // other tabs have been transferred successfully.
+    const placeholderTabs_ids: number[] = [];
 
     for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
       // set of ids of tabs present in the window, before and after modification
       const originalTabIds: Set<number> = windowsInCommon_tabIds_original[windowInCommon_id];
       const editedTabIds: Set<number> = windowsInCommon_tabIds_edited[windowInCommon_id];
 
-      // remove tabs that got closed by the user via the extension
-
-      const tabsToRemove_ids: number[] = Array.from(originalTabIds)
-        .filter(id => !editedTabIds.has(id) && !detachedTabIds.has(id));
-      await chromep.tabs.remove(tabsToRemove_ids);
-
-      // insert into the window, in correct order, tabs that got added by the user via the extension
-
+      // move transferred tabs into the window
       const tabsToMove_ids: number[] = Array.from(editedTabIds).filter(id => !originalTabIds.has(id));
 
-      // tabsKeysAfterRemoval contains the indices of the remaining tabs in terms of the tabs' final ordering in
-      // editedTabIds, and is used to help insert the tabsToMove in the correct order
-      const tabIdsAfterRemoval: number[] = Array.from(originalTabIds).filter(id => editedTabIds.has(id));
-      const tabsKeysAfterRemoval: number[] = new Array(tabIdsAfterRemoval.length);
+      for (const windowId of Object.keys(windowsInCommon_tabIds_original)) {
+        const tabIds: Set<number> = windowsInCommon_tabIds_original[windowId];
+        const intersection: number[] = tabsToMove_ids.filter(id => tabIds.has(id));
 
-      // populate tab keys
-      for (let i = 0; i < tabsKeysAfterRemoval.length; i++) {
-        tabsKeysAfterRemoval[i] = Array.from(editedTabIds).indexOf(tabIdsAfterRemoval[i]);
+        // if tabIds is a subset of tabsToMove_ids, create a temporary tab
+        if (intersection.length === tabIds.size) {
+          const result: chrome.tabs.Tab = await chromep.tabs.create({ windowId: +windowId });
+          placeholderTabs_ids.push(result.id);
+        }
       }
 
-      // move in the tabs in the correct order
-      for (const tabId of tabsToMove_ids) {
-        const key: number = Array.from(editedTabIds).indexOf(tabId);
-
-        for (let i = tabsKeysAfterRemoval.length; i > -1; i--) {
-          let insertionPoint: number;
-
-          if ((i === tabsKeysAfterRemoval.length && key > tabsKeysAfterRemoval[i - 1])  // tab belongs at the end
-            || (i === 0 && key < tabsKeysAfterRemoval[i])                               // tab belongs at the beginning
-            || ((i > 0 && i < tabsKeysAfterRemoval.length)                              // tab belongs somewhere in the middle
-              && (key < tabsKeysAfterRemoval[i] && key > tabsKeysAfterRemoval[i - 1]))
-          ) {
-            insertionPoint = i;
-          }
-
-
-          if (insertionPoint !== undefined) {
-            tabsKeysAfterRemoval.splice(insertionPoint, 0, key);
-            await chromep.tabs.move(tabId, {index: insertionPoint, windowId: windowInCommon_id});
-            break;
-          }
-        }
+      if (tabsToMove_ids.length > 0) {
+        await chromep.tabs.move(tabsToMove_ids, { index: -1, windowId: windowInCommon_id });
       }
     }
 
+    if (placeholderTabs_ids.length > 0) {
+      await chromep.tabs.remove(placeholderTabs_ids);
+    }
+
+    // 2.1. sort the tabs in each of the windows from part 2
+
+    for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
+      const targetSortOrder: number[] = Array.from(windowsInCommon_tabIds_edited[windowInCommon_id]);
+
+      const editedWindow: chrome.windows.Window = await chromep.windows.get(windowInCommon_id, { populate: true });
+      const currentTabIds: number[] = editedWindow.tabs.map(tab => tab.id);
+      const currentSortOrder: number[] = currentTabIds.map(id => targetSortOrder.indexOf(id));
+
+      debugger;
+
+      // selection sort, which allows for fewer swaps and thus fewer calls to chromep.tabs.move()
+      for (let i = 0; i < currentTabIds.length; i++) {
+        let minIndex = i;
+
+        for (let j = i; j < currentTabIds.length; j++) {
+          if (currentSortOrder[j] < currentSortOrder[minIndex]) {
+            minIndex = j;
+          }
+        }
+
+        if (minIndex !== i) {
+          let temp: number;
+
+          // swap for the actual tabs; must occur before swapping for currentTabIds
+          await chromep.tabs.move(currentTabIds[i], { index: minIndex, windowId: windowInCommon_id });
+          await chromep.tabs.move(currentTabIds[minIndex], { index: i, windowId: windowInCommon_id });
+
+          // swap for currentTabIds
+          temp = currentTabIds[minIndex];
+          currentTabIds[minIndex] = currentTabIds[i];
+          currentTabIds[i] = temp;
+
+          // swap for currentSortOrder
+          temp = currentSortOrder[minIndex];
+          currentSortOrder[minIndex] = currentSortOrder[i];
+          currentSortOrder[i] = temp;
+        }
+      }
+    }
 
     // 3. remove windows closed by the user via the extension
 
