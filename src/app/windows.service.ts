@@ -29,36 +29,6 @@ export class WindowsService {
   }
 
   async applyEditedWindows(editedWindows: chrome.windows.Window[]): Promise<void> {
-    /**
-     * scenarios:
-     * - 1: |editedWindows| and |_windowsData| have the same windows (no windows created or removed)
-     * - 2: |editedWindows| has some windows that |_windowsData| doesn't (windows created by detaching one or more tabs)
-     * - 3: |_windowsData| has some windows that |editedWindows| doesn't (windows removed)
-     * - 4: both scenarios 2 and 3
-     *
-     * steps:
-     * - categorize windows into 3 separate arrays of window ids:
-     *   - windows in |editedWindows| but not in |_windowsData|: new windows that have been detached
-     *   - windows in both |editedWindows| and |_windowsData|
-     *   - windows in |_windowsData| but not in |editedWindows|: windows that got removed via the extension
-     *
-     * (not supported yet due to drag and drop restrictions)
-     * - for window in |editedWindows| but not in |_windowsData|: new windows that have been detached
-     *   - look in |_windowsData| for the tab(s) contained in the new, detached window, and detach it/them into a new window
-     *
-     * - for each window in both |editedWindows| and |_windowsData|:
-     *   - get list of tabs that are in the edited window but not in the original window
-     *     - look for each missing tab in the other windows of |_windowsData|
-     * - for each window in both |editedWindows| and |_windowsData|:
-     *   - get list of tabs that are in the original window but not in the edited window
-     *     - remove each of these tabs
-     *
-     * - for each window in |_windowsData| but not in |editedWindows|:
-     *   - remove
-     *
-     * - if necessary: sort tabs within each window using insertion-style sort
-     */
-
     const originalWindowIds: Set<number> = new Set(this._windowsData.map(win => win.id));
     const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
 
