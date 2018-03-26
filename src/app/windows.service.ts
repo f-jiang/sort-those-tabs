@@ -45,7 +45,8 @@ export class WindowsService {
 
     const allDetachedTabs_ids: Set<number> = new Set();
 
-    // 1. create the windows consisting of detached tabs
+    // TODO untested
+    // 1. windows present after editing but not before: create them
 
     const newWindows: chrome.windows.Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
     for (const newWindow of newWindows) {
@@ -62,7 +63,7 @@ export class WindowsService {
       }
     }
 
-    // 2. rearrange pre-existing windows' tabs
+    // 2. windows present both before and after editing: move and/or close the windows' tabs as needed, then sort them
 
     // original and edited states of pre-existing windows that weren't closed via extension
     const windowsInCommon_original: chrome.windows.Window[] = this._windowsData
@@ -96,6 +97,8 @@ export class WindowsService {
     // properly. the id of the temporary tab is stored in the following array so that the tab can be closed after all
     // other tabs have been transferred successfully.
     const placeholderTabs_ids: number[] = [];
+
+    // 2.1: for each window present both before and after editing, remove and move their tabs as needed
 
     for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
       // set of ids of tabs present in the window, before and after modification
@@ -138,7 +141,7 @@ export class WindowsService {
       await chromep.tabs.remove(placeholderTabs_ids);
     }
 
-    // 2.1. sort the tabs in each of the windows from part 2
+    // 2.2. sort the tabs in each of the windows from part 2.1
 
     for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
       const targetSortOrder: number[] = Array.from(windowsInCommon_tabIdsMap_edited.get(windowInCommon_id));
@@ -177,7 +180,9 @@ export class WindowsService {
       }
     }
 
-    // 3. remove windows closed by the user via the extension
+    // TODO untested
+    // 3. windows present before editing but not after: remove them
+    // this step must occur after steps 1 and 2
 
     for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
       await chromep.windows.remove(windowToRemove_id);
