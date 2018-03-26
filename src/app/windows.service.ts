@@ -185,7 +185,7 @@ export class WindowsService {
       await chromep.windows.remove(windowToRemove_id);
     }
 
-    // TODO update this._windowsData
+    this._windowsData = await this._windowsPromise;
   }
 
 }
