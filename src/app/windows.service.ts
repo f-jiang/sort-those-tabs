@@ -10,18 +10,15 @@ const chromep: ChromePromise = new ChromePromise();
 @Injectable()
 export class WindowsService {
 
-  public windowsPromise: Promise<chrome.windows.Window[]>;
-
+  private _windowsPromise: Promise<chrome.windows.Window[]>;
   private _windowsData: chrome.windows.Window[];
 
   constructor() {
-    this.windowsPromise = new Promise<chrome.windows.Window[]>((resolve: (windows: chrome.windows.Window[]) => void) => {
-      chrome.windows.getAll({'populate': true}, resolve);
-    });
+    this._windowsPromise = chromep.windows.getAll({'populate': true });
+  }
 
-    this.windowsPromise.then((windows: chrome.windows.Window[]) => {
-      this._windowsData = getCopy(windows);
-    });
+  async init(): Promise<void> {
+    this._windowsData = await this._windowsPromise;
   }
 
   get windowsData(): chrome.windows.Window[] {

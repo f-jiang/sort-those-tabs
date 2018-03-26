@@ -15,10 +15,9 @@ export class SessionComponent implements OnInit {
 
   constructor(private windowsService: WindowsService) { }
 
-  ngOnInit() {
-    this.windowsService.windowsPromise.then((windows: chrome.windows.Window[]) => {
-      this.data = getCopy(windows);
-    });
+  async ngOnInit(): Promise<void> {
+    await this.windowsService.init();
+    this.data = this.windowsService.windowsData;
   }
 
   resetChanges(): void {
