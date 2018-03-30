@@ -148,6 +148,8 @@ export class WindowsService {
   private _windowsPromise: Promise<chrome.windows.Window[]>;
   private _windowsData: chrome.windows.Window[];
 
+  private _changeStack: SessionChange[];
+
   constructor() {
     this._windowsPromise = chromep.windows.getAll({'populate': true });
 
@@ -345,6 +347,18 @@ export class WindowsService {
 
     // FIXME even when windows data updated, future applies sometimes don't work properly
     this._windowsData = await this._windowsPromise;
+  }
+
+  acceptExternalChanges(): void {
+    // drop items in change queue
+    // reset this._windows data
+    // update data of all components subscribed to this service
+    return;
+  }
+
+  rejectExternalChanges(): void {
+    // process items in change queue; i.e. undo changes
+    return;
   }
 
 }
