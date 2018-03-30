@@ -7,6 +7,141 @@ import ChromePromise from 'chrome-promise';
 
 const chromep: ChromePromise = new ChromePromise();
 
+enum SessionChangeType {
+  TabCreated,     // type, affectedItemId
+  TabMoved,       // type, affectedItemId, oldWindowId, oldTabIndex, newTabIndex
+  TabDetached,    // type, affectedItemId, oldWindowId, newWindowId, oldTabIndex, newTabIndex
+  TabAttached,    // type, affectedItemId, oldWindowId, newWindowId, oldTabIndex, newTabIndex
+  TabRemoved,     // type, affectedItemId, oldWindowId, oldTabIndex
+  WindowCreated,  // type, affectedItemId, newWindowId
+  WindowRemoved   // type, affectedItemId, oldWindowId
+}
+
+class SessionChange {
+
+  type: SessionChangeType;
+  affectedItemId: number;
+  oldWindowId?: number;
+  newWindowId?: number;
+  oldTabIndex?: number;
+  newTabIndex?: number;
+
+  static inverse(current: SessionChange): SessionChange {
+    const builder: SessionChangeBuilder = new SessionChangeBuilder();
+
+    switch (current.type) {
+      case SessionChangeType.TabCreated:
+        builder.type(SessionChangeType.TabRemoved);
+        break;
+      case SessionChangeType.TabMoved:
+        builder.type(SessionChangeType.TabMoved);
+        break;
+      case SessionChangeType.TabDetached:
+        break;
+      case SessionChangeType.TabAttached:
+        break;
+      case SessionChangeType.TabRemoved:
+        builder.type(SessionChangeType.TabCreated);
+        break;
+      case SessionChangeType.WindowCreated:
+        builder.type(SessionChangeType.WindowCreated);
+        break;
+      case SessionChangeType.WindowRemoved:
+        builder.type(SessionChangeType.WindowRemoved);
+        break;
+      default:
+        break;
+    }
+
+    return builder.build();
+  }
+
+}
+
+// TODO disallow from returning uninitialized object
+class SessionChangeBuilder {
+
+  private _sessionChange: SessionChange;
+
+  constructor() {
+    this._sessionChange = new SessionChange();
+  }
+
+  type(type: SessionChangeType): SessionChangeBuilder {
+    this._sessionChange.type = type;
+    return this;
+  }
+
+  affectedItemId(affectedItemId: number): SessionChangeBuilder {
+    this._sessionChange.affectedItemId = affectedItemId;
+    return this;
+  }
+
+  oldWindowId(oldWindowId: number): SessionChangeBuilder {
+    const type: SessionChangeType = this._sessionChange.type;
+
+    if (!(type === SessionChangeType.TabMoved ||
+        type === SessionChangeType.TabDetached ||
+        type === SessionChangeType.TabAttached ||
+        type === SessionChangeType.TabRemoved ||
+        type === SessionChangeType.WindowRemoved )) {
+      throw new TypeError();
+    }
+
+    this._sessionChange.oldWindowId = oldWindowId;
+
+    return this;
+  }
+
+  newWindowId(newWindowId: number): SessionChangeBuilder {
+    const type: SessionChangeType = this._sessionChange.type;
+
+    if (!(type === SessionChangeType.TabDetached ||
+        type === SessionChangeType.TabAttached ||
+        type === SessionChangeType.WindowCreated )) {
+      throw new TypeError();
+    }
+
+    this._sessionChange.newWindowId = newWindowId;
+
+    return this;
+  }
+
+  oldTabIndex(oldTabIndex: number): SessionChangeBuilder {
+    const type: SessionChangeType = this._sessionChange.type;
+
+    if (!(type === SessionChangeType.TabMoved ||
+        type === SessionChangeType.TabDetached ||
+        type === SessionChangeType.TabAttached ||
+        type === SessionChangeType.TabRemoved )) {
+      throw new TypeError();
+    }
+
+    this._sessionChange.oldTabIndex = oldTabIndex;
+
+    return this;
+  }
+
+  newTabIndex(newTabIndex: number): SessionChangeBuilder {
+    const type: SessionChangeType = this._sessionChange.type;
+
+    if (!(type === SessionChangeType.TabMoved ||
+        type === SessionChangeType.TabDetached ||
+        type === SessionChangeType.TabAttached )) {
+      throw new TypeError();
+    }
+
+    this._sessionChange.newTabIndex = newTabIndex;
+
+    return this;
+  }
+
+  build(): SessionChange {
+    return this._sessionChange;
+  }
+
+}
+
 @Injectable()
 export class WindowsService {
 
