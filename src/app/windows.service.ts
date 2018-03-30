@@ -185,6 +185,7 @@ export class WindowsService {
       await chromep.windows.remove(windowToRemove_id);
     }
 
+    // FIXME even when windows data updated, future applies sometimes don't work properly
     this._windowsData = await this._windowsPromise;
   }
 
