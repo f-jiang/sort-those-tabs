@@ -15,6 +15,29 @@ export class WindowsService {
 
   constructor() {
     this._windowsPromise = chromep.windows.getAll({'populate': true });
+
+    chrome.tabs.onCreated.addListener((tab: chrome.tabs.Tab) => {
+      console.log('tab created');
+    });
+    chrome.tabs.onMoved.addListener((tabId: number, moveInfo: object) => {
+      console.log('tab moved within window');
+    });
+    chrome.tabs.onDetached.addListener((tabId: number, detachInfo: object) => {
+      console.log('tab detached');
+    });
+    chrome.tabs.onAttached.addListener((tabId: number, attachInfo: object) => {
+      console.log('tab detached');
+    });
+    chrome.tabs.onRemoved.addListener((tabId: number, removeInfo: object) => {
+      console.log('tab removed');
+    });
+
+    chrome.windows.onCreated.addListener((window: chrome.windows.Window) => {
+      console.log('window created');
+    });
+    chrome.windows.onRemoved.addListener((windowId: number) => {
+      console.log('window removed');
+    });
   }
 
   async init(): Promise<void> {
