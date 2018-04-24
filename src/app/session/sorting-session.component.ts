@@ -1,7 +1,7 @@
 /// <reference types="chrome"/>
 
 import { Component, OnInit } from '@angular/core';
-import { WindowsService } from '../windows.service';
+import { WindowsService, Window, Tab } from '../windows.service';
 import { getCopy } from '../utils';
 
 @Component({
@@ -11,7 +11,7 @@ import { getCopy } from '../utils';
 })
 export class SortingSessionComponent implements OnInit {
 
-  data: chrome.windows.Window[];
+  data: Window[];
 
   constructor(private windowsService: WindowsService) { }
 

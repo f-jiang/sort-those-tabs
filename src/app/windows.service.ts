@@ -7,25 +7,63 @@ import ChromePromise from 'chrome-promise';
 
 const chromep: ChromePromise = new ChromePromise();
 
+export class Window {
+
+  constructor(public id: number, public tabs?: Tab[]) { }
+
+  static fromChromeWindow(chromeWindow: chrome.windows.Window): Window {
+    const tabs: Tab[] = chromeWindow.tabs.map(chromeTab => Tab.fromChromeTab(chromeTab));
+    return new Window(chromeWindow.id, tabs);
+  }
+
+}
+
+export class Tab {
+
+  constructor(
+    public id: number,
+    public index: number,
+    public windowId: number,
+    public url: string,
+    public title: string,
+    public favIconUrl: string) { }
+
+  static fromChromeTab(chromeTab: chrome.tabs.Tab): Tab {
+    return new Tab(
+      chromeTab.id,
+      chromeTab.index,
+      chromeTab.windowId,
+      chromeTab.url,
+      chromeTab.title,
+      chromeTab.favIconUrl
+    );
+  }
+
+}
+
 @Injectable()
 export class WindowsService {
 
-  private _windowsPromise: Promise<chrome.windows.Window[]>;
-  private _windowsData: chrome.windows.Window[];
+  private _windowsPromise: Promise<Window[]>;
+  private _windowsData: Window[];
 
   constructor() {
-    this._windowsPromise = chromep.windows.getAll({'populate': true });
+    this._windowsPromise = chromep.windows.getAll({'populate': true })
+      .then((chromeWindows: chrome.windows.Window[]) => {
+        return chromeWindows.map(chromeWindow => Window.fromChromeWindow(chromeWindow));
+      }
+    );
   }
 
   async init(): Promise<void> {
     this._windowsData = await this._windowsPromise;
   }
 
-  get windowsData(): chrome.windows.Window[] {
+  get windowsData(): Window[] {
     return getCopy(this._windowsData);
   }
 
-  async applyEditedWindows(editedWindows: chrome.windows.Window[]): Promise<void> {
+  async applyEditedWindows(editedWindows: Window[]): Promise<void> {
     const originalWindowIds: Set<number> = new Set(this._windowsData.map(win => win.id));
     const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
 
@@ -45,7 +83,7 @@ export class WindowsService {
     // TODO untested
     // 1. windows present after editing but not before: create them
 
-    const newWindows: chrome.windows.Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
+    const newWindows: Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
     for (const newWindow of newWindows) {
       const tabsToDetach_ids: number[] = newWindow.tabs.map(tab => tab.id);
       const result: chrome.windows.Window = await chromep.windows.create({ tabId: tabsToDetach_ids[0] });
@@ -63,9 +101,9 @@ export class WindowsService {
     // 2. windows present both before and after editing: move and/or close the windows' tabs as needed, then sort them
 
     // original and edited states of pre-existing windows that weren't closed via extension
-    const windowsInCommon_original: chrome.windows.Window[] = this._windowsData
+    const windowsInCommon_original: Window[] = this._windowsData
       .filter(win => windowsInCommon_ids.has(win.id));
-    const windowsInCommon_edited: chrome.windows.Window[] = editedWindows
+    const windowsInCommon_edited: Window[] = editedWindows
       .filter(win => windowsInCommon_ids.has(win.id));
 
     // maps of above windows' tab id arrays; key = windowId, value = set of tab ids
@@ -143,7 +181,7 @@ export class WindowsService {
     for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
       const targetSortOrder: number[] = Array.from(windowsInCommon_tabIdsMap_edited.get(windowInCommon_id));
 
-      const editedWindow: chrome.windows.Window = await chromep.windows.get(windowInCommon_id, { populate: true });
+      const editedWindow: Window = Window.fromChromeWindow(await chromep.windows.get(windowInCommon_id, { populate: true }));
       const currentTabIds: number[] = editedWindow.tabs.map(tab => tab.id);
       const currentSortOrder: number[] = currentTabIds.map(id => targetSortOrder.indexOf(id));
 
