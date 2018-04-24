@@ -6,10 +6,10 @@ import { getCopy } from '../utils';
 
 @Component({
   selector: 'app-session',
-  templateUrl: './session.component.html',
-  styleUrls: ['./session.component.css']
+  templateUrl: './sorting-session.component.html',
+  styleUrls: ['./sorting-session.component.css']
 })
-export class SessionComponent implements OnInit {
+export class SortingSessionComponent implements OnInit {
 
   data: chrome.windows.Window[];
 

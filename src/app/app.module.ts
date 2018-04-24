@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { SessionComponent } from './session/session.component';
+import { SortingSessionComponent } from './session/sorting-session.component';
 
 import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
@@ -12,7 +12,7 @@ import { WindowsService } from './windows.service';
 @NgModule({
   declarations: [
     AppComponent,
-    SessionComponent,
+    SortingSessionComponent,
     WindowComponent
   ],
   imports: [
