@@ -3,7 +3,7 @@ import { Tab } from './tab';
 export class Window {
 
   id: number;
-  tabs: Tab[];
+  tabs: Tab[] = [];
 
   static fromChromeWindow(chromeWindow: chrome.windows.Window): Window {
     return new WindowBuilder()
