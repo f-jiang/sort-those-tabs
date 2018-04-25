@@ -1,6 +1,5 @@
-/// <reference types="chrome"/>
-
 import { Component, Input, OnInit } from '@angular/core';
+import { Window } from '../window';
 
 @Component({
   selector: 'app-window',
@@ -9,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class WindowComponent implements OnInit {
 
-  @Input() data: chrome.windows.Window;
+  @Input() data: Window;
 
   constructor() { }
 
