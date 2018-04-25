@@ -8,6 +8,7 @@ import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
 
 import { WindowsService } from './windows.service';
+import { SortingSessionService } from './sorting-session.service';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { WindowsService } from './windows.service';
     })
   ],
   providers: [
-    WindowsService
+    WindowsService,
+    SortingSessionService
   ],
   bootstrap: [AppComponent]
 })

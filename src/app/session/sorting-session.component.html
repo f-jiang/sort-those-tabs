@@ -1,5 +1,5 @@
 <div class="window-grid">
-  <div class="window-box" *ngFor="let window of data">
+  <div class="window-box" *ngFor="let window of sortingSessionService.data">
     <app-window [data]="window"></app-window>
   </div>
 </div>

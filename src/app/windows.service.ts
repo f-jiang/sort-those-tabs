@@ -2,50 +2,18 @@
 
 import { Injectable } from '@angular/core';
 import { getCopy } from './utils';
+import { Window } from './window';
+import { Tab } from './tab';
 
 import ChromePromise from 'chrome-promise';
 
 const chromep: ChromePromise = new ChromePromise();
 
-export class Window {
-
-  constructor(public id: number, public tabs?: Tab[]) { }
-
-  static fromChromeWindow(chromeWindow: chrome.windows.Window): Window {
-    const tabs: Tab[] = chromeWindow.tabs.map(chromeTab => Tab.fromChromeTab(chromeTab));
-    return new Window(chromeWindow.id, tabs);
-  }
-
-}
-
-export class Tab {
-
-  constructor(
-    public id: number,
-    public index: number,
-    public windowId: number,
-    public url: string,
-    public title: string,
-    public favIconUrl: string) { }
-
-  static fromChromeTab(chromeTab: chrome.tabs.Tab): Tab {
-    return new Tab(
-      chromeTab.id,
-      chromeTab.index,
-      chromeTab.windowId,
-      chromeTab.url,
-      chromeTab.title,
-      chromeTab.favIconUrl
-    );
-  }
-
-}
-
 @Injectable()
 export class WindowsService {
 
   private _windowsPromise: Promise<Window[]>;
-  private _windowsData: Window[];
+  private _data: Window[];
 
   constructor() {
     this._windowsPromise = chromep.windows.getAll({'populate': true })
@@ -56,25 +24,25 @@ export class WindowsService {
   }
 
   async init(): Promise<void> {
-    this._windowsData = await this._windowsPromise;
+    this._data = await this._windowsPromise;
   }
 
-  get windowsData(): Window[] {
-    return getCopy(this._windowsData);
+  get data(): Window[] {
+    return getCopy(this._data);
   }
 
-  async applyEditedWindows(editedWindows: Window[]): Promise<void> {
-    const originalWindowIds: Set<number> = new Set(this._windowsData.map(win => win.id));
+  async update(editedWindows: Window[]): Promise<void> {
+    const originalWindowIds: Set<number> = new Set(this._data.map(win => win.id));
     const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
 
     // TODO could probably get rid of ID sets
     // found in |editedWindows| only
     const newWindows_ids: Set<number> = new Set(Array.from(editedWindowIds)
       .filter(winId => !originalWindowIds.has(winId)));
-    // found in both |editedWindows| and |this._windowsData|
+    // found in both |editedWindows| and |this._data|
     const windowsInCommon_ids: Set<number> = new Set(Array.from(editedWindowIds)
       .filter(winId => originalWindowIds.has(winId)));
-    // found in |this._windowsData| only
+    // found in |this._data| only
     const windowsToRemove_ids: Set<number> = new Set(Array.from(originalWindowIds)
       .filter(winId => !editedWindowIds.has(winId)));
 
@@ -101,7 +69,7 @@ export class WindowsService {
     // 2. windows present both before and after editing: move and/or close the windows' tabs as needed, then sort them
 
     // original and edited states of pre-existing windows that weren't closed via extension
-    const windowsInCommon_original: Window[] = this._windowsData
+    const windowsInCommon_original: Window[] = this._data
       .filter(win => windowsInCommon_ids.has(win.id));
     const windowsInCommon_edited: Window[] = editedWindows
       .filter(win => windowsInCommon_ids.has(win.id));
@@ -224,7 +192,7 @@ export class WindowsService {
     }
 
     // FIXME even when windows data updated, future applies sometimes don't work properly
-    this._windowsData = await this._windowsPromise;
+    this._data = await this._windowsPromise;
   }
 
 }
