@@ -18,10 +18,7 @@ import { SortingSessionService } from './sorting-session.service';
   ],
   imports: [
     BrowserModule,
-    SortablejsModule.forRoot({
-      group: 'browser-editedWindows',
-      animation: 300
-    })
+    SortablejsModule
   ],
   providers: [
     WindowsService,
