@@ -12,19 +12,18 @@ const chromep: ChromePromise = new ChromePromise();
 @Injectable()
 export class WindowsService {
 
-  private _windowsPromise: Promise<Window[]>;
   private _data: Window[];
 
-  constructor() {
-    this._windowsPromise = chromep.windows.getAll({'populate': true })
-      .then((chromeWindows: chrome.windows.Window[]) => {
+  private async loadData(): Promise<void> {
+    this._data = await chromep.windows.getAll({'populate': true}).then(
+      (chromeWindows: chrome.windows.Window[]) => {
         return chromeWindows.map(chromeWindow => Window.fromChromeWindow(chromeWindow));
       }
     );
   }
 
   async init(): Promise<void> {
-    this._data = await this._windowsPromise;
+    await this.loadData();
   }
 
   get data(): Window[] {
@@ -192,7 +191,7 @@ export class WindowsService {
     }
 
     // FIXME even when windows data updated, future applies sometimes don't work properly
-    this._data = await this._windowsPromise;
+    await this.loadData();
   }
 
 }
