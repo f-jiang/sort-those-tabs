@@ -3,7 +3,6 @@
 import { Injectable } from '@angular/core';
 import { getCopy } from './utils';
 import { Window } from './window';
-import { Tab } from './tab';
 
 import ChromePromise from 'chrome-promise';
 
@@ -189,7 +188,6 @@ export class WindowsService {
     //   await chromep.windows.remove(windowToRemove_id);
     // }
 
-    // FIXME even when windows data updated, future applies sometimes don't work properly
     await this.loadData();
   }
 

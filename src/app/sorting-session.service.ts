@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { getCopy, focusExtensionWindow, focusExtensionTab } from './utils';
+import { focusExtensionWindow, focusExtensionTab } from './utils';
 import { WindowsService } from './windows.service';
 import { Window } from './window';
-import { Tab } from './tab';
 
 @Injectable()
 export class SortingSessionService {
@@ -25,6 +24,7 @@ export class SortingSessionService {
   }
 
   async applyChanges(): Promise<void> {
+    // remove any empty windows
     for (let i = 0; i < this._data.length; ) {
       if (this._data[i].tabs.length === 0) {
         this._data.splice(i, 1);

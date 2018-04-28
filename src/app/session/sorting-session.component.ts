@@ -1,5 +1,3 @@
-/// <reference types="chrome"/>
-
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';

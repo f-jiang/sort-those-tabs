@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SortablejsOptions } from 'angular-sortablejs';
 import { Window } from '../window';
 
@@ -7,7 +7,7 @@ import { Window } from '../window';
   templateUrl: './window.component.html',
   styleUrls: ['./window.component.css']
 })
-export class WindowComponent implements OnInit {
+export class WindowComponent {
 
   @Input() data: Window;
   @Output() onEdited: EventEmitter<void> = new EventEmitter<void>();
@@ -19,10 +19,5 @@ export class WindowComponent implements OnInit {
       this.onEdited.emit();
     }
   };
-
-  constructor() { }
-
-  ngOnInit() {
-  }
 
 }
