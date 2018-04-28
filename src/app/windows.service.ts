@@ -47,7 +47,6 @@ export class WindowsService {
 
     const allDetachedTabs_ids: Set<number> = new Set();
 
-    // TODO untested
     // 1. windows present after editing but not before: create them
 
     const newWindows: Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
