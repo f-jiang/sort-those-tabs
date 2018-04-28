@@ -46,6 +46,7 @@ export class SortingSessionComponent implements OnInit {
 
   resetChanges(): void {
     this.sortingSessionService.resetChanges();
+    this.addEmptyWindow();
   }
 
   async applyChanges(): Promise<void> {
