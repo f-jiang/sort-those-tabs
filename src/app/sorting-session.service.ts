@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getCopy } from './utils';
+import { getCopy, focusExtensionWindow, focusExtensionTab } from './utils';
 import { WindowsService } from './windows.service';
 import { Window } from './window';
 import { Tab } from './tab';
@@ -38,6 +38,10 @@ export class SortingSessionService {
     // after changes made to session via chrome api and windows service data updated, an event should be fired so that
     // the sorting session service's data is also updated and a chance arises to re-add the extra empty window
     this.loadData();
+
+    // keep extension in focus
+    await focusExtensionWindow();
+    await focusExtensionTab();
   }
 
   resetChanges(): void {
