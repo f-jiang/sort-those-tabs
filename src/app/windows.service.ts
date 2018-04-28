@@ -151,7 +151,7 @@ export class WindowsService {
       const currentTabIds: number[] = editedWindow.tabs.map(tab => tab.id);
       const currentSortOrder: number[] = currentTabIds.map(id => targetSortOrder.indexOf(id));
 
-      // selection sort, which allows for fewer swaps and thus fewer calls to chromep.tabs.move()
+      // selection sort
       for (let i = 0; i < currentTabIds.length; i++) {
         let minIndex = i;
 
