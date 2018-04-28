@@ -185,9 +185,9 @@ export class WindowsService {
     // 3. windows present before editing but not after: remove them
     // this step must occur after steps 1 and 2
 
-    for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
-      await chromep.windows.remove(windowToRemove_id);
-    }
+    // for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
+    //   await chromep.windows.remove(windowToRemove_id);
+    // }
 
     // FIXME even when windows data updated, future applies sometimes don't work properly
     await this.loadData();
