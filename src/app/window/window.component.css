@@ -17,7 +17,6 @@
   padding: 7px;
 
   background-color: #444;
-  color: #fff;
 }
 
 .tab-box > .header {
@@ -37,6 +36,8 @@
   margin: 0;
   /*hard-coded square button*/
   /*margin: 1.5px;*/
+
+  color: #fff;
 }
 
 .close-button {
