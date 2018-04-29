@@ -3,15 +3,65 @@
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   grid-auto-rows: 120px;
   grid-gap: 10px;
-
-  background-color: #ffffff;
-  color: #444444;
 }
 
 .tab-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  padding: 7px;
+
   background-color: #444;
   color: #fff;
-  border-radius: 5px;
-  padding: 20px;
-  font-size: 150%;
+}
+
+.tab-box > .header {
+  flex-shrink: 0;
+
+  margin-bottom: 5px;
+}
+
+.absolute {
+  position: relative;
+}
+
+.tab-title {
+  position: relative;
+  left: 0;
+
+  margin: 0;
+  /*hard-coded square button*/
+  /*margin: 1.5px;*/
+}
+
+.close-button {
+  display: none;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  height: 100%;
+}
+
+.header:hover > .close-button, .close-button:hover {
+  display: initial;
+}
+
+.tab-box > .body {
+  flex-grow: 1;
+
+  display: flex;
+}
+
+.body > img {
+  object-fit: contain;
+  width: 100%;
+}
+
+p.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

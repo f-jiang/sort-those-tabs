@@ -1,7 +1,13 @@
 <div class="container">
   <div class="tab-grid" [sortablejs]="data.tabs" [sortablejsOptions]="options">
     <div class="tab-box" *ngFor="let tab of data.tabs">
-      {{ tab.title }}
+      <div class="header absolute">
+        <p class="tab-title truncate">{{ tab.title }}</p>
+        <input class="close-button" type="button">
+      </div>
+      <div class="body">
+        <img src="{{ tab.favIconUrl }}">
+      </div>
     </div>
   </div>
 </div>
