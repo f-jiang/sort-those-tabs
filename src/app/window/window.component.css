@@ -5,6 +5,10 @@
   grid-gap: 10px;
 }
 
+.sortable {
+  min-height: 100px;
+}
+
 .tab-box {
   display: flex;
   flex-direction: column;
