@@ -1,10 +1,9 @@
-<div class="navbar">
-  <h2>Sort those Tabs</h2>
-  <button (click)="session.applyChanges()">Apply Changes</button>
-  <button (click)="session.resetChanges()">Reset</button>
+<div class="top-menu container">
+    <input type="button" class="button" (click)="session.applyChanges()" value="Apply Changes">
+    <input type="button" class="button" (click)="session.resetChanges()" value="Reset">
 </div>
 
-<div class="main">
+<div class="main-content">
   <!--all windows input binding-->
   <app-session #session></app-session>
 </div>
