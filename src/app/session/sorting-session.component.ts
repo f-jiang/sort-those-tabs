@@ -21,7 +21,7 @@ export class SortingSessionComponent implements OnInit {
     this.addEmptyWindow();
   }
 
-  onEdited(): void {
+  onTabMoved(): void {
     const windows: Window[] = this.sortingSessionService.data;
 
     // remove any empty windows except for the last one
