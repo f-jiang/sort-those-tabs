@@ -56,4 +56,16 @@ export class SortingSessionService {
     this._data.splice(index, 1);
   }
 
+  removeTab(tabId: number): void {
+    for (const window of this._data) {
+      const tabIds: number[] = window.tabs.map(tab => tab.id);
+      const tabIndex: number = tabIds.indexOf(tabId);
+
+      if (tabIndex !== -1) {
+        window.tabs.splice(tabIndex, 1);
+        break;
+      }
+    }
+  }
+
 }

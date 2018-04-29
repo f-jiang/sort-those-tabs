@@ -3,7 +3,7 @@
     <div class="tab-box" *ngFor="let tab of data.tabs">
       <div class="header absolute">
         <p class="tab-title truncate">{{ tab.title }}</p>
-        <input class="close-button" type="button">
+        <input class="close-button" type="button" (click)="onCloseButtonClicked(tab.id)">
       </div>
       <div class="body">
         <img src="{{ tab.favIconUrl }}">

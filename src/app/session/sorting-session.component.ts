@@ -42,6 +42,10 @@ export class SortingSessionComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  onTabClosed(tabId: number): void {
+    this.sortingSessionService.removeTab(tabId);
+  }
+
   resetChanges(): void {
     this.sortingSessionService.resetChanges();
     this.addEmptyWindow();

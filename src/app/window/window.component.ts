@@ -11,6 +11,7 @@ export class WindowComponent {
 
   @Input() data: Window;
   @Output() onTabMoved: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onTabClosed: EventEmitter<number> = new EventEmitter<number>();
 
   options: SortablejsOptions = {
     group: 'browser-editedWindows',
@@ -19,5 +20,9 @@ export class WindowComponent {
       this.onTabMoved.emit();
     }
   };
+
+  onCloseButtonClicked(tabId: number): void {
+    this.onTabClosed.emit(tabId);
+  }
 
 }
