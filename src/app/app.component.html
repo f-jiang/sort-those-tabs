@@ -1,9 +1,9 @@
 <div class="top-menu container">
-    <input class="button" type="button" (click)="session.applyChanges()" value="Apply Changes">
-    <input class="button" type="button" (click)="session.resetChanges()" value="Reset">
+    <input class="button" type="button" (click)="sortingSession.applyChanges()" value="Apply Changes">
+    <input class="button" type="button" (click)="sortingSession.resetChanges()" value="Reset">
 </div>
 
 <div class="main-content">
   <!--all windows input binding-->
-  <app-session #session></app-session>
+  <app-sorting-session #sortingSession></app-sorting-session>
 </div>

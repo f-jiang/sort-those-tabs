@@ -3,7 +3,7 @@ import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';
 
 @Component({
-  selector: 'app-session',
+  selector: 'app-sorting-session',
   templateUrl: './sorting-session.component.html',
   styleUrls: ['./sorting-session.component.css']
 })

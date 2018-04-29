@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { SortingSessionComponent } from './session/sorting-session.component';
+import { SortingSessionComponent } from './sorting-session/sorting-session.component';
 
 import { SortablejsModule } from 'angular-sortablejs';
 import { WindowComponent } from './window/window.component';
