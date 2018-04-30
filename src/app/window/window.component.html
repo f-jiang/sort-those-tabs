@@ -5,7 +5,7 @@
   </div>
 
   <div class="window-body">
-    <div class="tab-grid sortable" [sortablejs]="data.tabs" [sortablejsOptions]="options">
+    <div class="tab-grid" [sortablejs]="data.tabs" [sortablejsOptions]="options">
       <!--title 'SortThoseTabs' defined in index.html-->
       <div [className]="tab.title === 'Sort those Tabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
         <div class="tab-header absolute">

@@ -19,6 +19,8 @@
 .window-body {
   overflow-y: auto;
   overflow-x: hidden;
+
+  height: 100%;
 }
 
 .tab-grid {
@@ -28,10 +30,9 @@
   grid-gap: 10px;
 
   padding: 10px;
-}
 
-.sortable {
-  min-height: 100px;
+  /*prevent empty sortable from having 0 height*/
+  min-height: calc(100% - 20px);
 }
 
 .tab-box {
