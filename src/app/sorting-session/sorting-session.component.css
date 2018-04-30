@@ -6,10 +6,6 @@
 }
 
 .window-box {
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 10px;
-
   background-color: #ccc;
 }
 

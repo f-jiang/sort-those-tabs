@@ -1,15 +1,22 @@
 <div class="container">
-  <div class="tab-grid sortable" [sortablejs]="data.tabs" [sortablejsOptions]="options">
-    <!--title 'SortThoseTabs' defined in index.html-->
-    <div [className]="tab.title === 'Sort those Tabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
-      <div class="header absolute">
-        <p class="tab-title truncate">{{ tab.title }}</p>
+  <!--hide the header if this is an empty window-->
+  <div *ngIf="data.tabs.length !== 0" class="window-header">
+    <input class="close-window-button" type="button">
+  </div>
 
-        <!--title 'SortThoseTabs' defined in index.html-->
-        <input *ngIf="tab.title !== 'Sort those Tabs'" class="close-button" type="button" (click)="onCloseButtonClicked(tab.id)">
-      </div>
-      <div class="body">
-        <img src="{{ tab.favIconUrl }}">
+  <div class="window-body">
+    <div class="tab-grid sortable" [sortablejs]="data.tabs" [sortablejsOptions]="options">
+      <!--title 'SortThoseTabs' defined in index.html-->
+      <div [className]="tab.title === 'Sort those Tabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
+        <div class="tab-header absolute">
+          <p class="tab-title truncate">{{ tab.title }}</p>
+
+          <!--title 'SortThoseTabs' defined in index.html-->
+          <input *ngIf="tab.title !== 'Sort those Tabs'" class="close-tab-button" type="button" (click)="onCloseButtonClicked(tab.id)">
+        </div>
+        <div class="tab-body">
+          <img src="{{ tab.favIconUrl }}">
+        </div>
       </div>
     </div>
   </div>

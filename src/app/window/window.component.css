@@ -1,8 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  height: 100%;
+}
+
+.window-header {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  background-color: #333;
+}
+
+.window-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .tab-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   grid-auto-rows: 120px;
   grid-gap: 10px;
+
+  padding: 10px;
 }
 
 .sortable {
@@ -29,7 +54,7 @@
   background-color: #666;
 }
 
-.tab-box > .header {
+.tab-box > .tab-header {
   flex-shrink: 0;
 
   margin-bottom: 5px;
@@ -50,7 +75,7 @@
   color: #fff;
 }
 
-.close-button {
+.close-tab-button {
   display: none;
 
   position: absolute;
@@ -60,17 +85,17 @@
   height: 100%;
 }
 
-.tab-box:hover .close-button, .close-button:hover {
+.tab-box:hover .close-tab-button, .close-tab-button:hover {
   display: initial;
 }
 
-.tab-box > .body {
+.tab-box > .tab-body {
   flex-grow: 1;
 
   display: flex;
 }
 
-.body > img {
+.tab-body > img {
   object-fit: contain;
   width: 100%;
 }
