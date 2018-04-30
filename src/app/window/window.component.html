@@ -1,7 +1,10 @@
 <div class="container">
   <!--hide the header if this is an empty window-->
   <div *ngIf="data.tabs.length !== 0" class="window-header">
-    <input class="close-window-button" type="button" (click)="onCloseWindowButtonClicked(data.id)">
+    <input class="close-window-button"
+           type="button"
+           title="Close this window"
+           (click)="onCloseWindowButtonClicked(data.id)">
   </div>
 
   <div class="window-body">
@@ -9,12 +12,15 @@
       <!--title 'Sort those Tabs' defined in index.html-->
       <div [className]="tab.title === 'Sort those Tabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
         <div class="tab-header absolute">
-          <p class="tab-title truncate">{{ tab.title }}</p>
+          <div title="{{ tab.title }}">
+            <p class="tab-title truncate">{{ tab.title }}</p>
+          </div>
 
           <!--title 'Sort those Tabs' defined in index.html-->
           <input *ngIf="tab.title !== 'Sort those Tabs'"
                  class="close-tab-button"
                  type="button"
+                 title="Close this tab"
                  (click)="onCloseTabButtonClicked(tab.id)">
         </div>
         <div class="tab-body">
