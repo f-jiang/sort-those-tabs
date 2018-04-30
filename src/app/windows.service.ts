@@ -13,12 +13,16 @@ export class WindowsService {
 
   private _data: Window[];
 
-  private async loadData(): Promise<void> {
-    this._data = await chromep.windows.getAll({'populate': true}).then(
+  private async getAllWindows(): Promise<Window[]> {
+    return await chromep.windows.getAll({'populate': true}).then(
       (chromeWindows: chrome.windows.Window[]) => {
         return chromeWindows.map(chromeWindow => Window.fromChromeWindow(chromeWindow));
       }
     );
+  }
+
+  private async loadData(): Promise<void> {
+    this._data = await this.getAllWindows();
   }
 
   async init(): Promise<void> {
@@ -184,8 +188,12 @@ export class WindowsService {
     // 3. windows present before editing but not after: remove them
     // this step must occur after steps 1 and 2
 
+    const currentWindowIds: number[] = (await this.getAllWindows()).map(window => window.id);
+
     for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
-      await chromep.windows.remove(windowToRemove_id);
+      if (currentWindowIds.indexOf(windowToRemove_id) !== -1) {
+        await chromep.windows.remove(windowToRemove_id);
+      }
     }
 
     await this.loadData();
