@@ -197,6 +197,15 @@ export class WindowsService {
     }
 
     await this.loadData();
+
+    // temp fix: manually remove closed windows from result of chromep.windows.getAll()
+    for (let i = 0; i < this._data.length; ) {
+      if (windowsToRemove_ids.has(this._data[i].id)) {
+        this._data.splice(i, 1);
+      } else {
+        i++;
+      }
+    }
   }
 
 }
