@@ -60,7 +60,7 @@
   height: 100%;
 }
 
-.header:hover > .close-button, .close-button:hover {
+.tab-box:hover .close-button, .close-button:hover {
   display: initial;
 }
 
