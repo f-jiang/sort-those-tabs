@@ -21,7 +21,7 @@ export class WindowComponent {
     }
   };
 
-  onCloseButtonClicked(tabId: number): void {
+  onCloseTabButtonClicked(tabId: number): void {
     this.onTabClosed.emit(tabId);
   }
 

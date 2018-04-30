@@ -12,7 +12,10 @@
           <p class="tab-title truncate">{{ tab.title }}</p>
 
           <!--title 'SortThoseTabs' defined in index.html-->
-          <input *ngIf="tab.title !== 'Sort those Tabs'" class="close-tab-button" type="button" (click)="onCloseButtonClicked(tab.id)">
+          <input *ngIf="tab.title !== 'Sort those Tabs'"
+                 class="close-tab-button"
+                 type="button"
+                 (click)="onCloseTabButtonClicked(tab.id)">
         </div>
         <div class="tab-body">
           <img src="{{ tab.favIconUrl }}">
