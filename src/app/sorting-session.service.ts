@@ -54,16 +54,12 @@ export class SortingSessionService {
   }
 
   async removeWindow(windowId: number): Promise<void> {
-    const windowToRemove_index: number = this._data.findIndex((window: Window) => {
-      return window.id === windowId;
-    });
+    const windowToRemove_index: number = this._data.findIndex(window => window.id === windowId);
 
     if (windowToRemove_index !== -1) {
       const windowToRemove: Window = this._data[windowToRemove_index];
       const extensionTabId: number = await getExtensionTabId();
-      const extensionTabIndex: number = windowToRemove.tabs.findIndex((tab: Tab) => {
-        return tab.id === extensionTabId;
-      });
+      const extensionTabIndex: number = windowToRemove.tabs.findIndex(tab => tab.id === extensionTabId);
 
       // if contains extension tab, close every other tab
       if (extensionTabIndex !== -1) {
@@ -77,8 +73,7 @@ export class SortingSessionService {
 
   removeTab(tabId: number): void {
     for (const window of this._data) {
-      const tabIds: number[] = window.tabs.map(tab => tab.id);
-      const tabIndex: number = tabIds.indexOf(tabId);
+      const tabIndex: number = window.tabs.findIndex(tab => tab.id === tabId);
 
       if (tabIndex !== -1) {
         window.tabs.splice(tabIndex, 1);
