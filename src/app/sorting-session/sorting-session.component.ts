@@ -46,6 +46,10 @@ export class SortingSessionComponent implements OnInit {
     this.sortingSessionService.removeTab(tabId);
   }
 
+  async onWindowClosed(windowId: number): Promise<void> {
+    await this.sortingSessionService.removeWindow(windowId);
+  }
+
   resetChanges(): void {
     this.sortingSessionService.resetChanges();
     this.addEmptyWindow();

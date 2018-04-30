@@ -1,7 +1,7 @@
 <div class="container">
   <!--hide the header if this is an empty window-->
   <div *ngIf="data.tabs.length !== 0" class="window-header">
-    <input class="close-window-button" type="button">
+    <input class="close-window-button" type="button" (click)="onCloseWindowButtonClicked(data.id)">
   </div>
 
   <div class="window-body">

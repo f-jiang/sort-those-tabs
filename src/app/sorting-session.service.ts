@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { focusExtensionWindow, focusExtensionTab } from './utils';
+import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
 import { WindowsService } from './windows.service';
 import { Window } from './window';
+import { Tab } from './tab';
 
 @Injectable()
 export class SortingSessionService {
@@ -52,8 +53,26 @@ export class SortingSessionService {
     this._data.push(window);
   }
 
-  removeWindow(index: number): void {
-    this._data.splice(index, 1);
+  async removeWindow(windowId: number): Promise<void> {
+    const windowToRemove_index: number = this._data.findIndex((window: Window) => {
+      return window.id === windowId;
+    });
+
+    if (windowToRemove_index !== -1) {
+      const windowToRemove: Window = this._data[windowToRemove_index];
+      const extensionTabId: number = await getExtensionTabId();
+      const extensionTabIndex: number = windowToRemove.tabs.findIndex((tab: Tab) => {
+        return tab.id === extensionTabId;
+      });
+
+      // if contains extension tab, close every other tab
+      if (extensionTabIndex !== -1) {
+        windowToRemove.tabs = windowToRemove.tabs.slice(extensionTabIndex, extensionTabIndex + 1);
+      // else close entire window
+      } else {
+        this._data.splice(windowToRemove_index, 1);
+      }
+    }
   }
 
   removeTab(tabId: number): void {
