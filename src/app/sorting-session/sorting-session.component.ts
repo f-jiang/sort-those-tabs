@@ -44,20 +44,24 @@ export class SortingSessionComponent implements OnInit {
 
   onTabClosed(tabId: number): void {
     this.sortingSessionService.removeTab(tabId);
+    this.changeDetectorRef.detectChanges();
   }
 
   async onWindowClosed(windowId: number): Promise<void> {
     await this.sortingSessionService.removeWindow(windowId);
+    this.changeDetectorRef.detectChanges();
   }
 
   resetChanges(): void {
     this.sortingSessionService.resetChanges();
     this.addEmptyWindow();
+    this.changeDetectorRef.detectChanges();
   }
 
   async applyChanges(): Promise<void> {
     await this.sortingSessionService.applyChanges();
     this.addEmptyWindow();
+    this.changeDetectorRef.detectChanges();
   }
 
 }
