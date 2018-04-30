@@ -19,6 +19,16 @@
   background-color: #444;
 }
 
+.extension-tab-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  padding: 7px;
+
+  background-color: #666;
+}
+
 .tab-box > .header {
   flex-shrink: 0;
 

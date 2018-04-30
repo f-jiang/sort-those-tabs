@@ -1,6 +1,6 @@
 <div class="container">
   <div class="tab-grid sortable" [sortablejs]="data.tabs" [sortablejsOptions]="options">
-    <div class="tab-box" *ngFor="let tab of data.tabs">
+    <div [className]="tab.title === 'SortThoseTabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
       <div class="header absolute">
         <p class="tab-title truncate">{{ tab.title }}</p>
 

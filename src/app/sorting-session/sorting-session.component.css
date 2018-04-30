@@ -12,3 +12,8 @@
 
   background-color: #ccc;
 }
+
+/* special style for empty window */
+.window-box:last-child {
+  background-color: #eee;
+}
