@@ -33,6 +33,7 @@ export class WindowsService {
     return getCopy(this._data);
   }
 
+  // TODO use set util functions such as intersection and difference
   async update(editedWindows: Window[]): Promise<void> {
     const originalWindowIds: Set<number> = new Set(this._data.map(win => win.id));
     const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
@@ -184,7 +185,6 @@ export class WindowsService {
       }
     }
 
-    // TODO untested
     // 3. windows present before editing but not after: remove them
     // this step must occur after steps 1 and 2
 
@@ -198,6 +198,7 @@ export class WindowsService {
 
     await this.loadData();
 
+    // TODO: resolve temp fix
     // temp fix: manually remove closed windows from result of chromep.windows.getAll()
     for (let i = 0; i < this._data.length; ) {
       if (windowsToRemove_ids.has(this._data[i].id)) {
