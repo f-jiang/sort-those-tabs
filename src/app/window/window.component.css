@@ -38,11 +38,11 @@
 }
 
 .tab-box {
+  --padding: 7px;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-
-  padding: 7px;
 
   background-color: #444;
 }
@@ -61,6 +61,7 @@
   flex-shrink: 0;
 
   margin-bottom: 5px;
+  padding: var(--padding);
 }
 
 .absolute {
@@ -82,10 +83,9 @@
   display: none;
 
   position: absolute;
-  top: 0;
-  right: 0;
-
-  height: 100%;
+  top: var(--padding);
+  right: var(--padding);
+  bottom: var(--padding);
 }
 
 .tab-box:hover .close-tab-button, .close-tab-button:hover {
@@ -96,6 +96,8 @@
   flex-grow: 1;
 
   display: flex;
+
+  padding: var(--padding);
 }
 
 .tab-body > img {
