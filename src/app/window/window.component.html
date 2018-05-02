@@ -10,8 +10,10 @@
   <div class="window-body">
     <div class="tab-grid" [sortablejs]="data.tabs" [sortablejsOptions]="options">
       <!--title 'Sort those Tabs' defined in index.html-->
-      <div [className]="tab.title === 'Sort those Tabs' ? 'extension-tab-box' : 'tab-box'" *ngFor="let tab of data.tabs">
-        <div class="tab-header absolute">
+      <div class="tab-box"
+           [class.extension-tab-box]="tab.title === 'Sort those Tabs'"
+           *ngFor="let tab of data.tabs">
+        <div class="tab-header absolute" [class.extension-tab-header]="tab.title === 'Sort those Tabs'">
           <div title="{{ tab.title }}">
             <p class="tab-title truncate">{{ tab.title }}</p>
           </div>
