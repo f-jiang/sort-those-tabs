@@ -14,8 +14,22 @@
   align-items: center;
 }
 
+.container > * {
+  margin-right: 5px;
+}
+
 .button {
-  margin-right: 10px;
+  padding: 5px;
+
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  background-color: var(--dark-shades-color);
+}
+
+.button:hover {
+  background-color: #fff;
 }
 
 .main-content {
