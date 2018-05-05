@@ -52,6 +52,8 @@
 .tab-box {
   --padding: 7px;
 
+  cursor: pointer;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
