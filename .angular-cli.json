@@ -9,6 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
+        "icons",
         "favicon.ico",
         "manifest.json",
         "background.js"
