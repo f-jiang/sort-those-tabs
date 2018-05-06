@@ -1,7 +1,7 @@
 <div class="window-grid">
   <div class="window-box"
-       *ngFor="let window of sortingSessionService.data"
-       [@removal]="window.state">
+       *ngFor="let window of sortingSessionService.data; let i = index"
+       [@removal]="states[i]">
     <app-window [data]="window"
                 (onTabMoved)="onTabMoved()"
                 (onTabClosed)="onTabClosed($event)"
