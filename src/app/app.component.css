@@ -6,6 +6,8 @@
   top: 0;
 
   background-color: #333333;
+  /*always on top*/
+  z-index: 1000;
 }
 
 .container {
