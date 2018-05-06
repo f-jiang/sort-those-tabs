@@ -26,6 +26,9 @@ import { Window } from '../window';
 })
 export class WindowComponent {
 
+  readonly extensionFavIconUrl: string = 'assets/icon.png';
+  readonly genericWebpageIconUrl: string = 'assets/webpage.png';
+
   @Input() data: Window;
   @Output() onTabMoved: EventEmitter<void> = new EventEmitter<void>();
   @Output() onTabClosed: EventEmitter<number> = new EventEmitter<number>();

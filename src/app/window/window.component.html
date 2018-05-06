@@ -34,7 +34,10 @@
           </button>
         </div>
         <div class="tab-body">
-          <img src="{{ tab.favIconUrl }}">
+          <!--title 'Sort those Tabs' defined in index.html-->
+          <img #imgRef
+               [src]="tab.title === 'Sort those Tabs' ? extensionFavIconUrl : tab.favIconUrl"
+               (error)="imgRef.src = genericWebpageIconUrl;">
         </div>
       </div>
     </div>
