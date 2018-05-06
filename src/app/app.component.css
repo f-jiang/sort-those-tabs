@@ -27,7 +27,7 @@
   color: #fff;
   cursor: pointer;
   outline: none;
-  background-color: var(--dark-shades-color);
+  background-color: #333333;
 }
 
 .button:hover {

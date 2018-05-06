@@ -23,7 +23,7 @@
   color: #fff;
   cursor: pointer;
   outline: none;
-  background-color: var(--main-brand-color);
+  background-color: #333333;
 }
 
 .close-window-button:hover {
