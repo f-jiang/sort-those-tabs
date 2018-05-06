@@ -67,6 +67,8 @@
   background-color: #eef3f3;
   border: 1px solid #ccc;
   border-radius: 5px;
+
+  transition: box-shadow 150ms;
 }
 
 .tab-box:hover {
@@ -125,6 +127,8 @@
 
   /*rgba should be same colour as tab-header background*/
   background: linear-gradient(to left, rgba(204, 204, 204, 0.6), transparent);
+
+  transition: opacity 150ms;
 }
 
 /*FIXME: not being applied*/

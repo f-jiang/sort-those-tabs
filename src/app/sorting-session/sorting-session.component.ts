@@ -1,11 +1,30 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  EventEmitter,
+  Input,
+  Output,
+  trigger,
+  state,
+  style,
+  transition,
+  animate
+} from '@angular/core';
 import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';
 
 @Component({
   selector: 'app-sorting-session',
   templateUrl: './sorting-session.component.html',
-  styleUrls: ['./sorting-session.component.css']
+  styleUrls: ['./sorting-session.component.css'],
+  animations: [
+    trigger('removal', [
+      state('void', style({opacity: 0})),
+      state('*', style({opacity: 1})),
+      transition('* => void', animate('250ms'))
+    ])
+  ]
 })
 export class SortingSessionComponent implements OnInit {
 

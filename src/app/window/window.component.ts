@@ -1,11 +1,28 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  trigger,
+  state,
+  style,
+  transition,
+  animate
+} from '@angular/core';
 import { SortablejsOptions } from 'angular-sortablejs';
 import { Window } from '../window';
 
 @Component({
   selector: 'app-window',
   templateUrl: './window.component.html',
-  styleUrls: ['./window.component.css']
+  styleUrls: ['./window.component.css'],
+  animations: [
+    trigger('removal', [
+      state('void', style({opacity: 0})),
+      state('*', style({opacity: 1})),
+      transition('* => void', animate('250ms'))
+    ])
+  ]
 })
 export class WindowComponent {
 
