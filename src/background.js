@@ -1,14 +1,30 @@
 (function() {
   chrome.browserAction.onClicked.addListener(function(tab) {
-    // title 'Sort those Tabs' defined in index.html
-    chrome.tabs.query({ 'title': 'Sort those Tabs', 'currentWindow': true }, function(result) {
-      debugger;
-      // Open the extension in a new tab if it hasn't already been opened in the current window
-      if (result.length === 0) {
-        chrome.tabs.create({ 'url': chrome.extension.getURL('index.html') });
-      // Otherwise, activate the current window's pre-existing extension tab
+    chrome.windows.getAll({ 'populate': true }, function(windows) {
+      var extensionWindowId = -1;
+      var extensionTabId = -1;
+
+      for (var i = 0; i < windows.length; i++) {
+        var extensionTabIndex = windows[i].tabs.findIndex(function(tab) {
+          // title 'Sort those Tabs' defined in index.html
+          return tab.title === 'Sort those Tabs';
+        });
+
+        // found the extension tab
+        if (extensionTabIndex !== -1) {
+          extensionWindowId = windows[i].id;
+          extensionTabId = windows[i].tabs[extensionTabIndex].id;
+          break;
+        }
+      }
+
+      // if found, then bring the extension's window and tab into focus
+      if (extensionWindowId !== -1 && extensionTabId !== -1) {
+        chrome.windows.update(extensionWindowId, { 'focused': true });
+        chrome.tabs.update(extensionTabId, { 'active': true });
+      // if extension tab not found, create it in the current window
       } else {
-        chrome.tabs.update(result[0].id, { 'active': true }); // Assumption: tab.id property has been defined
+        chrome.tabs.create({ 'url': chrome.extension.getURL('index.html') });
       }
     });
   });

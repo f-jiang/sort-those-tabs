@@ -4,6 +4,10 @@ import ChromePromise from 'chrome-promise';
 
 const chromep: ChromePromise = new ChromePromise();
 
+export async function getExtensionWindowId(): Promise<number> {
+  return (await chromep.windows.getCurrent()).id;
+}
+
 export async function getExtensionTabId(): Promise<number> {
   return (await chromep.tabs.getCurrent()).id;
 }
