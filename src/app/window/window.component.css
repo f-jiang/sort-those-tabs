@@ -80,6 +80,10 @@
 }
 
 .tab-header {
+  --line-height: 1.2;
+
+  height: calc(var(--line-height) * 1em);
+
   flex-shrink: 0;
 
   margin-bottom: 5px;
@@ -103,6 +107,8 @@
   margin: 0;
   /*hard-coded square button*/
   /*margin: 1.5px;*/
+
+  line-height: var(--line-height);
 
   color: #28517f;
 }
