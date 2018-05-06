@@ -69,6 +69,10 @@
   border-radius: 5px;
 }
 
+.tab-box:hover {
+  box-shadow: 0 0 1px 1px #cdcdcd;
+}
+
 .extension-tab-box {
   background-color: #757483;
 }
