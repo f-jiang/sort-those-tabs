@@ -14,9 +14,14 @@
       <div class="tab-box"
            [class.extension-tab-box]="tab.title === 'Sort those Tabs'"
            *ngFor="let tab of data.tabs">
+        <!--title 'Sort those Tabs' defined in index.html-->
         <div class="tab-header absolute" [class.extension-tab-header]="tab.title === 'Sort those Tabs'">
           <div title="{{ tab.title }}">
-            <p class="tab-title truncate">{{ tab.title }}</p>
+            <!--title 'Sort those Tabs' defined in index.html-->
+            <p class="tab-title truncate"
+               [class.extension-tab-title]="tab.title === 'Sort those Tabs'">
+              {{ tab.title }}
+            </p>
           </div>
 
           <!--title 'Sort those Tabs' defined in index.html-->

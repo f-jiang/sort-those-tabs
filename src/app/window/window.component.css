@@ -13,21 +13,25 @@
   justify-content: flex-end;
   align-items: center;
 
+  /*on top of everything except for top-menu*/
+  z-index: 999;
+
   padding: 7px;
 
-  background-color: #333;
+  background-color: #ccc;
+  box-shadow: 0 1px 1px 1px #ccc;
 }
 
 .close-window-button {
   border: none;
-  color: #fff;
+  color: #666576;
   cursor: pointer;
   outline: none;
-  background-color: #333333;
+  background-color: #ccc;
 }
 
 .close-window-button:hover {
-  background-color: #fff;
+  background-color: #d6d6d6;
 }
 
 .window-body {
@@ -50,6 +54,8 @@
 }
 
 .tab-box {
+  overflow: hidden;
+
   --padding: 7px;
 
   cursor: pointer;
@@ -58,23 +64,26 @@
   flex-direction: column;
   justify-content: flex-start;
 
-  background-color: #444;
+  background-color: #eef3f3;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .extension-tab-box {
-  background-color: #666;
+  background-color: #757483;
 }
 
-.tab-box > .tab-header {
+.tab-header {
   flex-shrink: 0;
 
   margin-bottom: 5px;
   padding: var(--padding);
+
+  background-color: #ccc;
 }
 
-.tab-box > .extension-tab-header {
-  /*lighter version of --light-accent-color*/
-  background-color: #808c8f;
+.extension-tab-header {
+  background-color: #666576;
 }
 
 .absolute {
@@ -89,7 +98,11 @@
   /*hard-coded square button*/
   /*margin: 1.5px;*/
 
-  color: #fff;
+  color: #28517f;
+}
+
+.extension-tab-title {
+  color: #eef3f3;
 }
 
 .close-tab-button {
@@ -102,12 +115,12 @@
   bottom: 0;
 
   border: none;
-  color: #fff;
+  color: #666576;
   cursor: pointer;
   outline: none;
 
   /*rgba should be same colour as tab-header background*/
-  background: linear-gradient(to left, rgba(250, 250, 250, 0.6), transparent);
+  background: linear-gradient(to left, rgba(204, 204, 204, 0.6), transparent);
 }
 
 /*FIXME: not being applied*/
@@ -119,7 +132,7 @@
   opacity: 0.7;
 }
 
-.tab-box > .tab-body {
+.tab-body {
   flex-grow: 1;
 
   display: flex;

@@ -6,10 +6,8 @@
 }
 
 .window-box {
-  background-color: #ccc;
-}
-
-/* special style for empty window */
-.window-box:last-child {
-  background-color: #eee;
+  overflow: hidden;
+  background-color: #ececec;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

@@ -5,9 +5,11 @@
   position: fixed;
   top: 0;
 
-  background-color: #333333;
   /*always on top*/
   z-index: 1000;
+
+  background-color: #7690eb;
+  box-shadow: 0px 1px 2px 2px #ccc;
 }
 
 .container {
@@ -24,14 +26,14 @@
   padding: 5px;
 
   border: none;
-  color: #fff;
+  color: #eef3f3;
   cursor: pointer;
   outline: none;
-  background-color: #333333;
+  background-color: #7690eb;
 }
 
 .button:hover {
-  background-color: #fff;
+  background-color: #839bed;
 }
 
 .main-content {
