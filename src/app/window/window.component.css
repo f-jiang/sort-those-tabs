@@ -76,7 +76,13 @@
 }
 
 .extension-tab-box {
+  border: 1px solid #5f5f75;
   background-color: #757483;
+  transition: box-shadow 150ms;
+}
+
+.extension-tab-box:hover {
+  box-shadow: 0 0 1px 1px #6a6a82;
 }
 
 .tab-header {
