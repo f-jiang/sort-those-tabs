@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';
+import { getExtensionWindowId } from '../utils';
 
 @Component({
   selector: 'app-sorting-session',
@@ -46,6 +47,21 @@ export class SortingSessionComponent implements OnInit {
     this.refreshStates();
   }
 
+  private async closeWindow(windowId: number): Promise<void> {
+    await this.sortingSessionService.removeWindow(windowId);
+    this.refreshStates();
+  }
+
+  private async onAnimationStateChange(event: any, windowId: number): Promise<void> {
+    console.log('animation state change');
+    if (event.fromState === SortingSessionComponent.windowActiveState &&
+        event.toState === SortingSessionComponent.windowRemovedState) {
+      console.log('went from active to removed');
+      await this.closeWindow(windowId);
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
   async ngOnInit(): Promise<void> {
     await this.sortingSessionService.init();
     this.addEmptyWindow();
@@ -79,11 +95,16 @@ export class SortingSessionComponent implements OnInit {
   }
 
   async onWindowClosed(windowId: number): Promise<void> {
-    const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
-    this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
-    await this.sortingSessionService.removeWindow(windowId);
+    // don't run animation if window to close contains extension window
+    if (windowId === await getExtensionWindowId()) {
+      await this.closeWindow(windowId);
+    } else {
+      const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
+      this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
+      // remainder of window removal occurs in the animation callback this.onAnimationStateChange()
+    }
+
     this.changeDetectorRef.detectChanges();
-    this.refreshStates();
   }
 
   resetChanges(): void {
