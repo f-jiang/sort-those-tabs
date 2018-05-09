@@ -53,10 +53,8 @@ export class SortingSessionComponent implements OnInit {
   }
 
   private async onAnimationStateChange(event: any, windowId: number): Promise<void> {
-    console.log('animation state change');
     if (event.fromState === SortingSessionComponent.windowActiveState &&
         event.toState === SortingSessionComponent.windowRemovedState) {
-      console.log('went from active to removed');
       await this.closeWindow(windowId);
       this.changeDetectorRef.detectChanges();
     }
