@@ -34,9 +34,6 @@ export class SortingSessionService {
     }
 
     await this.windowsService.update(this._data);
-
-    // after changes made to session via chrome api and windows service data updated, an event should be fired so that
-    // the sorting session service's data is also updated and a chance arises to re-add the extra empty window
     this.loadData();
 
     // keep extension in focus
