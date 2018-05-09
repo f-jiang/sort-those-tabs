@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
 import { WindowsService } from './windows.service';
 import { Window } from './window';
-import { Tab } from './tab';
 
 @Injectable()
 export class SortingSessionService {
