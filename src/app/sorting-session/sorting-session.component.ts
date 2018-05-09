@@ -22,7 +22,7 @@ import { getExtensionWindowId } from '../utils';
       state(SortingSessionComponent.windowActiveState, style({opacity: 1})),
       transition(
         `${SortingSessionComponent.windowActiveState} => ${SortingSessionComponent.windowRemovedState}`,
-        animate('2500ms')
+        animate('250ms')
       )
     ])
   ]
