@@ -23,7 +23,6 @@ export class SortingSessionService {
     chrome.windows.onCreated.addListener(onExternalDataChange);
     chrome.windows.onRemoved.addListener(onExternalDataChange);
     chrome.tabs.onCreated.addListener(onExternalDataChange);
-    chrome.tabs.onUpdated.addListener(onExternalDataChange);
     chrome.tabs.onMoved.addListener(onExternalDataChange);
     chrome.tabs.onDetached.addListener(onExternalDataChange);
     chrome.tabs.onAttached.addListener(onExternalDataChange);
