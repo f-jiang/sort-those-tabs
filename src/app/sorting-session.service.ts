@@ -2,13 +2,33 @@ import { Injectable } from '@angular/core';
 import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
 import { WindowsService } from './windows.service';
 import { Window } from './window';
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class SortingSessionService {
 
   private _data: Window[];
 
-  constructor(private windowsService: WindowsService) { }
+  private _externalDataChangeSource: Subject<void> = new Subject<void>();
+  public externalDataChange$: Observable<void> = this._externalDataChangeSource.asObservable();
+
+  constructor(private windowsService: WindowsService) {
+    const onExternalDataChange: (() => void) = async () => {
+      await this.windowsService.loadData();
+      this.loadData();
+      this._externalDataChangeSource.next();
+    };
+
+    chrome.windows.onCreated.addListener(onExternalDataChange);
+    chrome.windows.onRemoved.addListener(onExternalDataChange);
+    chrome.tabs.onCreated.addListener(onExternalDataChange);
+    chrome.tabs.onUpdated.addListener(onExternalDataChange);
+    chrome.tabs.onMoved.addListener(onExternalDataChange);
+    chrome.tabs.onDetached.addListener(onExternalDataChange);
+    chrome.tabs.onAttached.addListener(onExternalDataChange);
+    chrome.tabs.onRemoved.addListener(onExternalDataChange);
+  }
 
   async init(): Promise<void> {
     await this.windowsService.init();

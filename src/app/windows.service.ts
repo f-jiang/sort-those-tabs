@@ -21,16 +21,16 @@ export class WindowsService {
     );
   }
 
-  private async loadData(): Promise<void> {
-    this._data = await this.getAllWindows();
-  }
-
   async init(): Promise<void> {
     await this.loadData();
   }
 
   get data(): Window[] {
     return getCopy(this._data);
+  }
+
+  async loadData(): Promise<void> {
+    this._data = await this.getAllWindows();
   }
 
   // TODO use set util functions such as intersection and difference

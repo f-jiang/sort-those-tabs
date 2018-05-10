@@ -64,6 +64,11 @@ export class SortingSessionComponent implements OnInit {
     await this.sortingSessionService.init();
     this.addEmptyWindow();
     this.refreshStates();
+
+    this.sortingSessionService.externalDataChange$.subscribe(() => {
+      this.changeDetectorRef.detectChanges();
+      this.addEmptyWindow();
+    });
   }
 
   onTabMoved(): void {
