@@ -87,7 +87,11 @@ export class WindowComponent implements OnInit {
   }
 
   onCloseTabButtonClicked(tabId: number): void {
-    this.onTabClosed.emit(tabId);
+    if (this.data.tabs.length > 1) {
+      this.closeTab(tabId);
+    } else {
+      this.onWindowClosed.emit(this.windowId);
+    }
   }
 
   onCloseWindowButtonClicked(): void {
