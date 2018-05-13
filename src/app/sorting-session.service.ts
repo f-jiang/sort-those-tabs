@@ -14,19 +14,7 @@ export class SortingSessionService {
   public externalDataChange$: Observable<void> = this._externalDataChangeSource.asObservable();
 
   constructor(private windowsService: WindowsService) {
-    const onExternalDataChange: (() => void) = async () => {
-      await this.windowsService.loadData();
-      this.loadData();
-      this._externalDataChangeSource.next();
-    };
-
-    chrome.windows.onCreated.addListener(onExternalDataChange);
-    chrome.windows.onRemoved.addListener(onExternalDataChange);
-    chrome.tabs.onCreated.addListener(onExternalDataChange);
-    chrome.tabs.onMoved.addListener(onExternalDataChange);
-    chrome.tabs.onDetached.addListener(onExternalDataChange);
-    chrome.tabs.onAttached.addListener(onExternalDataChange);
-    chrome.tabs.onRemoved.addListener(onExternalDataChange);
+    this.addExternalChangeListeners();
   }
 
   async init(): Promise<void> {
@@ -42,7 +30,36 @@ export class SortingSessionService {
     this._data = this.windowsService.data;
   }
 
+  // use function expression so that this evaluates to the SortingSessionService instance
+  private _onExternalDataChange: (() => Promise<void>) = async () => {
+    await this.windowsService.loadData();
+    this.loadData();
+    this._externalDataChangeSource.next();
+  };
+
+  private addExternalChangeListeners(): void {
+    chrome.windows.onCreated.addListener(this._onExternalDataChange);
+    chrome.windows.onRemoved.addListener(this._onExternalDataChange);
+    chrome.tabs.onCreated.addListener(this._onExternalDataChange);
+    chrome.tabs.onMoved.addListener(this._onExternalDataChange);
+    chrome.tabs.onDetached.addListener(this._onExternalDataChange);
+    chrome.tabs.onAttached.addListener(this._onExternalDataChange);
+    chrome.tabs.onRemoved.addListener(this._onExternalDataChange);
+  }
+
+  private removeExternalChangeListeners(): void {
+    chrome.windows.onCreated.removeListener(this._onExternalDataChange);
+    chrome.windows.onRemoved.removeListener(this._onExternalDataChange);
+    chrome.tabs.onCreated.removeListener(this._onExternalDataChange);
+    chrome.tabs.onMoved.removeListener(this._onExternalDataChange);
+    chrome.tabs.onDetached.removeListener(this._onExternalDataChange);
+    chrome.tabs.onAttached.removeListener(this._onExternalDataChange);
+    chrome.tabs.onRemoved.removeListener(this._onExternalDataChange);
+  }
+
   async applyChanges(): Promise<void> {
+    this.removeExternalChangeListeners();
+
     // remove any empty windows
     for (let i = 0; i < this._data.length; ) {
       if (this._data[i].tabs.length === 0) {
@@ -58,6 +75,8 @@ export class SortingSessionService {
     // keep extension in focus
     await focusExtensionWindow();
     await focusExtensionTab();
+
+    this.addExternalChangeListeners();
   }
 
   resetChanges(): void {
