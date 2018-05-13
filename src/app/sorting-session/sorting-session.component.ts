@@ -16,6 +16,8 @@ import { Window } from '../window';
 import { WindowComponent } from '../window/window.component';
 import { getExtensionTabId, getExtensionWindowId } from '../utils';
 
+// TODO: states: array or map, and update function calls accordingly
+// TODO: remove unneeded calls to ChangeDetectorRef.detectChanges()
 @Component({
   selector: 'app-sorting-session',
   templateUrl: './sorting-session.component.html',
