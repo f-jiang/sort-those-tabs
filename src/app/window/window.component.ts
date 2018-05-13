@@ -90,8 +90,8 @@ export class WindowComponent implements OnInit {
     this.onTabClosed.emit(tabId);
   }
 
-  onCloseWindowButtonClicked(windowId: number): void {
-    this.onWindowClosed.emit(windowId);
+  onCloseWindowButtonClicked(): void {
+    this.onWindowClosed.emit(this.windowId);
   }
 
 }
