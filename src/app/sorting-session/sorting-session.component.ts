@@ -107,22 +107,20 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   }
 
   async onWindowClosed(windowId: number): Promise<void> {
-    // don't run animation if window to close contains extension window
-    if (windowId === await getExtensionWindowId()) {
-      const windowToClose: WindowComponent = this.windows.find(
-        windowComponent => windowComponent.windowId === windowId
-      );
-      const extensionTabId: number = await getExtensionTabId();
+    const windowToClose: WindowComponent = this.windows.find(windowComponent => windowComponent.windowId === windowId);
+    const extensionTabId: number = await getExtensionTabId();
 
+    if (windowToClose.tabIds.indexOf(extensionTabId) === -1) {
+      const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
+      this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
+      // remainder of window removal occurs in the animation callback this.onAnimationStateChange()
+    // if window contains extension tab, then close the other tabs but not the window
+    } else {
       for (const tabId of windowToClose.tabIds) {
         if (tabId !== extensionTabId) {
           windowToClose.closeTab(tabId);
         }
       }
-    } else {
-      const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
-      this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
-      // remainder of window removal occurs in the animation callback this.onAnimationStateChange()
     }
 
     this.changeDetectorRef.detectChanges();
