@@ -13,8 +13,9 @@
       <!--title 'Sort those Tabs' defined in index.html-->
       <div class="tab-box"
            [class.extension-tab-box]="tab.title === 'Sort those Tabs'"
-           *ngFor="let tab of data.tabs"
-           [@removal]="tab.state">
+           *ngFor="let tab of data.tabs; let i = index"
+           [@removal]="states[i]"
+           (@removal.done)="onAnimationStateChange($event, tab.id)">
         <!--title 'Sort those Tabs' defined in index.html-->
         <div class="tab-header absolute" [class.extension-tab-header]="tab.title === 'Sort those Tabs'">
           <div title="{{ tab.title }}">

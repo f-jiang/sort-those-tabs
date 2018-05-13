@@ -7,7 +7,9 @@ import {
   state,
   style,
   transition,
-  animate
+  animate,
+  ChangeDetectorRef,
+  OnInit
 } from '@angular/core';
 import { SortablejsOptions } from 'angular-sortablejs';
 import { Window } from '../window';
@@ -18,18 +20,24 @@ import { Window } from '../window';
   styleUrls: ['./window.component.css'],
   animations: [
     trigger('removal', [
-      state('void', style({opacity: 0})),
-      state('*', style({opacity: 1})),
-      transition('* => void', animate('250ms'))
+      state('removed', style({opacity: 0})),
+      state('active', style({opacity: 1})),
+      // workaround for sortable: when tabs get moved to a lower index, their animation states become void;
+      // therefore only require that a closed tab's final state be 'removed'
+      transition('* => removed', animate('250ms'))
     ])
   ]
 })
-export class WindowComponent {
+export class WindowComponent implements OnInit {
 
   readonly extensionFavIconUrl: string = 'assets/icon.png';
   readonly genericWebpageIconUrl: string = 'assets/webpage.png';
 
-  @Input() data: Window;
+  private states: string[];
+
+  @Input()
+  private data: Window;
+
   @Output() onTabMoved: EventEmitter<void> = new EventEmitter<void>();
   @Output() onTabClosed: EventEmitter<number> = new EventEmitter<number>();
   @Output() onWindowClosed: EventEmitter<number> = new EventEmitter<number>();
@@ -39,8 +47,44 @@ export class WindowComponent {
     animation: 300,
     onEnd: (): any => {
       this.onTabMoved.emit();
+      this.refreshStates();
     }
   };
+
+  constructor(private changeDetectorRef: ChangeDetectorRef) { }
+
+  private refreshStates(): void {
+    this.states = new Array(this.data.tabs.length);
+    this.states.fill('active');
+  }
+
+  private onAnimationStateChange(event: any, tabId: number): void {
+    // workaround for sortable: when tabs get moved to a lower index, their animation states become void;
+    // therefore only require that a closed tab's final state be 'removed'
+    if (event.toState === 'removed') {
+      this.refreshStates();
+      this.onTabClosed.emit(tabId);
+      this.refreshStates();
+    }
+  }
+
+  ngOnInit(): void {
+    this.refreshStates();
+  }
+
+  get windowId(): number {
+    return this.data.id;
+  }
+
+  get tabIds(): number[] {
+    return this.data.tabs.map(tab => tab.id);
+  }
+
+  closeTab(tabId: number): void {
+    const tabIndex: number = this.data.tabs.findIndex(tab => tab.id === tabId);
+    this.states[tabIndex] = 'removed';
+    this.changeDetectorRef.detectChanges();
+  }
 
   onCloseTabButtonClicked(tabId: number): void {
     this.onTabClosed.emit(tabId);

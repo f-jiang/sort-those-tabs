@@ -2,15 +2,19 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  AfterViewInit,
   trigger,
   state,
   style,
   transition,
-  animate
+  animate,
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';
-import { getExtensionWindowId } from '../utils';
+import { WindowComponent } from '../window/window.component';
+import { getExtensionTabId, getExtensionWindowId } from '../utils';
 
 @Component({
   selector: 'app-sorting-session',
@@ -27,10 +31,13 @@ import { getExtensionWindowId } from '../utils';
     ])
   ]
 })
-export class SortingSessionComponent implements OnInit {
+export class SortingSessionComponent implements OnInit, AfterViewInit {
 
   static readonly windowRemovedState: string = 'removed';
   static readonly windowActiveState: string = 'active';
+
+  @ViewChildren(WindowComponent)
+  private windows: QueryList<WindowComponent>;
 
   private states: string[];
 
@@ -47,15 +54,11 @@ export class SortingSessionComponent implements OnInit {
     this.refreshStates();
   }
 
-  private async closeWindow(windowId: number): Promise<void> {
-    await this.sortingSessionService.removeWindow(windowId);
-    this.refreshStates();
-  }
-
   private async onAnimationStateChange(event: any, windowId: number): Promise<void> {
     if (event.fromState === SortingSessionComponent.windowActiveState &&
         event.toState === SortingSessionComponent.windowRemovedState) {
-      await this.closeWindow(windowId);
+      await this.sortingSessionService.removeWindow(windowId);
+      this.refreshStates();
       this.changeDetectorRef.detectChanges();
     }
   }
@@ -69,6 +72,10 @@ export class SortingSessionComponent implements OnInit {
       this.changeDetectorRef.detectChanges();
       this.addEmptyWindow();
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.windows.changes.subscribe(() => {});
   }
 
   onTabMoved(): void {
@@ -100,7 +107,16 @@ export class SortingSessionComponent implements OnInit {
   async onWindowClosed(windowId: number): Promise<void> {
     // don't run animation if window to close contains extension window
     if (windowId === await getExtensionWindowId()) {
-      await this.closeWindow(windowId);
+      const windowToClose: WindowComponent = this.windows.find(
+        windowComponent => windowComponent.windowId === windowId
+      );
+      const extensionTabId: number = await getExtensionTabId();
+
+      for (const tabId of windowToClose.tabIds) {
+        if (tabId !== extensionTabId) {
+          windowToClose.closeTab(tabId);
+        }
+      }
     } else {
       const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
       this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
