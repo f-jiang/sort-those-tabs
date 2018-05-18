@@ -6,6 +6,11 @@ import { Window } from './window';
 
 import ChromePromise from 'chrome-promise';
 
+// TODO resolve workaround
+// temp workaround for buggy chromep api calls
+import { Tab } from './tab';
+// end of workaround
+
 const chromep: ChromePromise = new ChromePromise();
 
 @Injectable()
@@ -51,6 +56,15 @@ export class WindowsService {
 
     const allDetachedTabs_ids: Set<number> = new Set();
 
+    // TODO resolve workaround
+    // temp workaround for buggy chromep.windows.get() call
+    const unsortedWindowsMap: Map<number, Window> = new Map();  // represents the state of the browser windows prior
+                                                                // to tab-sorting and window-closing
+    for (const window of this._data) {
+      unsortedWindowsMap.set(window.id, window);
+    }
+    // end workaround
+
     // 1. windows present after editing but not before: create them
 
     const newWindows: Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
@@ -66,6 +80,35 @@ export class WindowsService {
       for (const tabId of tabsToDetach_ids) {
         allDetachedTabs_ids.add(tabId);
       }
+
+      // TODO resolve workaround
+      // temp workaround for buggy chromep.windows.get() call
+      // resultWindow has the old state with only the initial tab, so need to add the rest
+      const resultWindow: Window = Window.fromChromeWindow(result);
+      const detachedTabs: Tab[] = [];
+
+      for (const detachedTabId of tabsToDetach_ids) {
+        for (const window of unsortedWindowsMap.values()) {
+          const detachedTabIndex: number = window.tabs.findIndex(tab => tab.id === detachedTabId);
+
+          // transfer detached tab from original window to new detached window
+          if (detachedTabIndex !== -1) {
+            const detachedTab: Tab = window.tabs.splice(detachedTabIndex, 1)[0];
+
+            // need to manually close windows that had all tabs removed
+            if (window.tabs.length === 0) {
+              unsortedWindowsMap.delete(window.id);
+            }
+
+            detachedTabs.push(detachedTab);
+            break;
+          }
+        }
+      }
+
+      resultWindow.tabs = detachedTabs;
+      unsortedWindowsMap.set(result.id, resultWindow);
+      // end workaround
     }
 
     // 2. windows present both before and after editing: move and/or close the windows' tabs as needed, then sort them
@@ -122,11 +165,42 @@ export class WindowsService {
           const result: chrome.tabs.Tab = await chromep.tabs.create({ windowId: +windowId });
           placeholderTabs_ids.push(result.id);
         }
+
+        // TODO resolve workaround
+        // no placeholder tabs needed for workaround
       }
 
       if (tabsToMove_ids.length > 0) {
         await chromep.tabs.move(tabsToMove_ids, { index: -1, windowId: windowInCommon_id });
       }
+
+      // TODO resolve workaround
+      // temp workaround for buggy chromep.windows.get() call
+      const tabsInWindow: Tab[] = unsortedWindowsMap.get(windowInCommon_id).tabs;
+
+      for (const tabToMove_id of tabsToMove_ids) {
+        for (const window of unsortedWindowsMap.values()) {
+          if (window.id === windowInCommon_id) {
+            continue;
+          }
+
+          const tabToMove_index: number = window.tabs.findIndex(tab => tab.id === tabToMove_id);
+
+          // transfer tab from original window to new window
+          if (tabToMove_index !== -1) {
+            const tabToMove: Tab = window.tabs.splice(tabToMove_index, 1)[0];
+
+            // need to manually close windows that had all tabs removed
+            if (window.tabs.length === 0) {
+              unsortedWindowsMap.delete(window.id);
+            }
+
+            tabsInWindow.push(tabToMove);
+            break;
+          }
+        }
+      }
+      // end workaround
 
       // TODO untested
       // close tabs to be removed from window
@@ -140,6 +214,13 @@ export class WindowsService {
       if (tabsToRemove_ids.length > 0) {
         await chromep.tabs.remove(tabsToRemove_ids);
       }
+
+      // TODO resolve workaround
+      // temp workaround for buggy chromep.windows.get() call
+      unsortedWindowsMap.get(windowInCommon_id).tabs = tabsInWindow.filter(
+        tab => tabsToRemove_ids.indexOf(tab.id) === -1
+      );
+      // end workaround
     }
 
     if (placeholderTabs_ids.length > 0) {
@@ -151,7 +232,10 @@ export class WindowsService {
     for (const windowInCommon_id of Array.from(windowsInCommon_ids)) {
       const targetSortOrder: number[] = Array.from(windowsInCommon_tabIdsMap_edited.get(windowInCommon_id));
 
-      const editedWindow: Window = Window.fromChromeWindow(await chromep.windows.get(windowInCommon_id, { populate: true }));
+      // buggy api call
+      // const editedWindow: Window = Window.fromChromeWindow(await chromep.windows.get(windowInCommon_id, { populate: true }));
+      const editedWindow: Window = unsortedWindowsMap.get(windowInCommon_id);
+
       const currentTabIds: number[] = editedWindow.tabs.map(tab => tab.id);
       const currentSortOrder: number[] = currentTabIds.map(id => targetSortOrder.indexOf(id));
 
@@ -188,7 +272,9 @@ export class WindowsService {
     // 3. windows present before editing but not after: remove them
     // this step must occur after steps 1 and 2
 
-    const currentWindowIds: number[] = (await this.getAllWindows()).map(window => window.id);
+    // buggy api call
+    // const currentWindowIds: number[] = (await this.getAllWindows()).map(window => window.id);
+    const currentWindowIds: number[] = Array.from(unsortedWindowsMap.keys());
 
     for (const windowToRemove_id of Array.from(windowsToRemove_ids)) {
       if (currentWindowIds.indexOf(windowToRemove_id) !== -1) {
@@ -198,15 +284,21 @@ export class WindowsService {
 
     await this.loadData();
 
-    // TODO: resolve temp fix
-    // temp fix: manually remove closed windows from result of chromep.windows.getAll()
+    // TODO: resolve workaround
+    // temp workaround for buggy chromep.windows.getAll() call: manually remove closed windows from result
+    // of chromep.windows.getAll(), and update tabs of the remaining windows
     for (let i = 0; i < this._data.length; ) {
       if (windowsToRemove_ids.has(this._data[i].id)) {
         this._data.splice(i, 1);
       } else {
+        if (windowsInCommon_ids.has(this._data[i].id)) {
+          this._data[i].tabs = editedWindows.find(window => window.id === this._data[i].id).tabs;
+        }
+
         i++;
       }
     }
+    // end workaround
   }
 
 }
