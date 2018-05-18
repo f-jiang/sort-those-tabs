@@ -142,13 +142,12 @@
   transition: opacity 150ms;
 }
 
-/*FIXME: not being applied*/
-.close-tab-button:hover {
-  opacity: 1;
-}
-
 .tab-box:hover .close-tab-button {
   opacity: 0.7;
+}
+
+.tab-box:hover .close-tab-button:hover {
+  opacity: 1;
 }
 
 .tab-body {
