@@ -1,6 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Sort those Tabs",
+    "description": "Organize large browsing sessions with ease",
     "version": "1.0",
     "browser_action": { },
     "background": {
