@@ -22,15 +22,18 @@ import { Window } from '../window';
   styleUrls: ['./window.component.css'],
   animations: [
     trigger('removal', [
-      state('removed', style({opacity: 0})),
-      state('active', style({opacity: 1})),
+      state(WindowComponent.tabRemovedState, style({opacity: 0})),
+      state(WindowComponent.tabActiveState, style({opacity: 1})),
       // workaround for sortable: when tabs get moved to a lower index, their animation states become void;
-      // therefore only require that a closed tab's final state be 'removed'
-      transition('* => removed', animate('250ms'))
+      // therefore only require that a closed tab's final state be WindowComponent.tabRemovedState
+      transition(`* => ${WindowComponent.tabRemovedState}`, animate('250ms'))
     ])
   ]
 })
 export class WindowComponent implements OnInit {
+
+  private static readonly tabRemovedState = 'removed';
+  private static readonly tabActiveState = 'active';
 
   @Output()
   private _onTabMoved: EventEmitter<void> = new EventEmitter<void>();
@@ -60,7 +63,7 @@ export class WindowComponent implements OnInit {
 
   private refreshStates(): void {
     this._states = new Array(this.data.tabs.length);
-    this._states.fill('active');
+    this._states.fill(WindowComponent.tabActiveState);
   }
 
   public get windowId(): number {
@@ -77,8 +80,8 @@ export class WindowComponent implements OnInit {
 
   public onAnimationStateChange(event: any, tabId: number): void {
     // workaround for sortable: when tabs get moved to a lower index, their animation states become void;
-    // therefore only require that a closed tab's final state be 'removed'
-    if (event.toState === 'removed') {
+    // therefore only require that a closed tab's final state be WindowComponent.tabRemovedState
+    if (event.toState === WindowComponent.tabRemovedState) {
       this.refreshStates();
       this._onTabRemoved.emit(tabId);
       this.refreshStates();
@@ -87,7 +90,7 @@ export class WindowComponent implements OnInit {
 
   public removeTab(tabId: number): void {
     const tabIndex: number = this.data.tabs.findIndex(tab => tab.id === tabId);
-    this._states[tabIndex] = 'removed';
+    this._states[tabIndex] = WindowComponent.tabRemovedState;
     this.changeDetectorRef.detectChanges();
   }
 
