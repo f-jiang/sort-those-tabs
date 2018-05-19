@@ -44,25 +44,25 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
 
   private _states: string[];
 
-  constructor(private _sortingSessionService: SortingSessionService,
+  constructor(public sortingSessionService: SortingSessionService,
               private _changeDetectorRef: ChangeDetectorRef) { }
 
   private refreshStates(): void {
-    this._states = new Array(this._sortingSessionService.data.length);
+    this._states = new Array(this.sortingSessionService.data.length);
     this._states.fill(SortingSessionComponent.windowActiveState);
   }
 
   private addEmptyWindow(): void {
-    this._sortingSessionService.addWindow(new Window());
+    this.sortingSessionService.addWindow(new Window());
     this.refreshStates();
   }
 
   public async ngOnInit(): Promise<void> {
-    await this._sortingSessionService.init();
+    await this.sortingSessionService.init();
     this.addEmptyWindow();
     this.refreshStates();
 
-    this._sortingSessionService.externalDataChange$.subscribe(() => {
+    this.sortingSessionService.externalDataChange$.subscribe(() => {
       this._changeDetectorRef.detectChanges();
       this.addEmptyWindow();
     });
@@ -75,14 +75,14 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   public async onAnimationStateChange(event: any, windowId: number): Promise<void> {
     if (event.fromState === SortingSessionComponent.windowActiveState &&
         event.toState === SortingSessionComponent.windowRemovedState) {
-      await this._sortingSessionService.removeWindow(windowId);
+      await this.sortingSessionService.removeWindow(windowId);
       this.refreshStates();
       this._changeDetectorRef.detectChanges();
     }
   }
 
   public onTabMoved(): void {
-    const windows: Window[] = this._sortingSessionService.data;
+    const windows: Window[] = this.sortingSessionService.data;
 
     // remove any empty windows except for the last one
     for (let i = 0; i < windows.length - 1; ) {
@@ -103,7 +103,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   }
 
   public onTabRemoved(tabId: number): void {
-    this._sortingSessionService.removeTab(tabId);
+    this.sortingSessionService.removeTab(tabId);
     this._changeDetectorRef.detectChanges();
   }
 
@@ -112,7 +112,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     const extensionTabId: number = await getExtensionTabId();
 
     if (windowToClose.tabIds.indexOf(extensionTabId) === -1) {
-      const removedIndex: number = this._sortingSessionService.data.findIndex(window => window.id === windowId);
+      const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
       this._states[removedIndex] = SortingSessionComponent.windowRemovedState;
       // remainder of window removal occurs in the animation callback this.onAnimationStateChange()
     // if window contains extension tab, then close the other tabs but not the window
@@ -128,14 +128,14 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   }
 
   public resetChanges(): void {
-    this._sortingSessionService.resetChanges();
+    this.sortingSessionService.resetChanges();
     this.addEmptyWindow();
     this._changeDetectorRef.detectChanges();
     this.refreshStates();
   }
 
   public async applyChanges(): Promise<void> {
-    await this._sortingSessionService.applyChanges();
+    await this.sortingSessionService.applyChanges();
     this.addEmptyWindow();
     this._changeDetectorRef.detectChanges();
     this.refreshStates();

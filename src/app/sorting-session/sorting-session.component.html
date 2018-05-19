@@ -1,6 +1,6 @@
 <div class="window-grid">
   <div class="window-box"
-       *ngFor="let window of _sortingSessionService.data; let i = index"
+       *ngFor="let window of sortingSessionService.data; let i = index"
        [@removal]="_states[i]"
        (@removal.done)="onAnimationStateChange($event, window.id)">
     <app-window [data]="window"
