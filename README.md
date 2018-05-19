@@ -1,27 +1,44 @@
-# SortThoseTabs
+# Sort those Tabs
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.9.
+Organizing your Chrome tabs in a large, multi-window browsing session can be a pain. Sort those Tabs makes this process quick and easy.
 
-## Development server
+- Access all your Chrome windows and tabs from the same page
+- Easily close, transfer, and re-order your Chrome tabs and windows
+- Apply or reset your changes with the click of a button
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Installation
 
-## Code scaffolding
+### Release Version
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Release versions can be downloaded from the Chrome Web Store.
 
-## Build
+### Development Releases
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+- `git clone` this repo or download as ZIP
+- To install dependencies, `cd` into the local repo and execute the following:
 
-## Running unit tests
+```
+$ sudo npm install
+$ ng build
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Finally, load the newly created `dist` directory as an unpacked extension in Google Chrome
 
-## Running end-to-end tests
+## Built With
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+- [Angular](https://angular.io/)
+- [chrome-promise](https://github.com/tfoxy/chrome-promise)
 
-## Further help
+## Authors
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- [f-jiang](https://github.com/f-jiang)
+
+## License
+
+This project is licensed under the MIT License; see the [LICENSE](https://github.com/f-jiang/sort-those-tabs/blob/master/LICENSE) file for details.
+
+## Acknowledgements
+
+- Extension icon made by [freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](https://www.flaticon.com/)
+- Generic webpage icon made by [Elias Bikbulatov](https://www.flaticon.com/authors/elias-bikbulatov) from [www.flaticon.com](https://www.flaticon.com/)
+
