@@ -1,5 +1,7 @@
 # Sort those Tabs
 
+<img src="https://raw.githubusercontent.com/f-jiang/sort-those-tabs/master/screenshot.png">
+
 Organizing your Chrome tabs in a large, multi-window browsing session can be a pain. Sort those Tabs makes this process quick and easy.
 
 - Access all your Chrome windows and tabs from the same page
