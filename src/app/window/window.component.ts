@@ -11,7 +11,9 @@ import {
   ChangeDetectorRef,
   OnInit
 } from '@angular/core';
+
 import { SortablejsOptions } from 'angular-sortablejs';
+
 import { Window } from '../window';
 
 @Component({
@@ -30,23 +32,26 @@ import { Window } from '../window';
 })
 export class WindowComponent implements OnInit {
 
-  readonly extensionFavIconUrl: string = 'assets/icon.png';
-  readonly genericWebpageIconUrl: string = 'assets/webpage.png';
+  @Output()
+  private _onTabMoved: EventEmitter<void> = new EventEmitter<void>();
+  @Output()
+  private _onTabRemoved: EventEmitter<number> = new EventEmitter<number>();
+  @Output()
+  private _onWindowRemoved: EventEmitter<number> = new EventEmitter<number>();
 
-  private states: string[];
+  private _states: string[];
+
+  public readonly extensionFavIconUrl: string = 'assets/icon.png';
+  public readonly genericWebpageIconUrl: string = 'assets/webpage.png';
 
   @Input()
-  private data: Window;
+  public data: Window;
 
-  @Output() onTabMoved: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onTabClosed: EventEmitter<number> = new EventEmitter<number>();
-  @Output() onWindowClosed: EventEmitter<number> = new EventEmitter<number>();
-
-  options: SortablejsOptions = {
+  public options: SortablejsOptions = {
     group: 'browser-editedWindows',
     animation: 300,
     onEnd: (): any => {
-      this.onTabMoved.emit();
+      this._onTabMoved.emit();
       this.refreshStates();
     }
   };
@@ -54,48 +59,48 @@ export class WindowComponent implements OnInit {
   constructor(private changeDetectorRef: ChangeDetectorRef) { }
 
   private refreshStates(): void {
-    this.states = new Array(this.data.tabs.length);
-    this.states.fill('active');
+    this._states = new Array(this.data.tabs.length);
+    this._states.fill('active');
   }
 
-  private onAnimationStateChange(event: any, tabId: number): void {
+  public get windowId(): number {
+    return this.data.id;
+  }
+
+  public get tabIds(): number[] {
+    return this.data.tabs.map(tab => tab.id);
+  }
+
+  public ngOnInit(): void {
+    this.refreshStates();
+  }
+
+  public onAnimationStateChange(event: any, tabId: number): void {
     // workaround for sortable: when tabs get moved to a lower index, their animation states become void;
     // therefore only require that a closed tab's final state be 'removed'
     if (event.toState === 'removed') {
       this.refreshStates();
-      this.onTabClosed.emit(tabId);
+      this._onTabRemoved.emit(tabId);
       this.refreshStates();
     }
   }
 
-  ngOnInit(): void {
-    this.refreshStates();
-  }
-
-  get windowId(): number {
-    return this.data.id;
-  }
-
-  get tabIds(): number[] {
-    return this.data.tabs.map(tab => tab.id);
-  }
-
-  closeTab(tabId: number): void {
+  public removeTab(tabId: number): void {
     const tabIndex: number = this.data.tabs.findIndex(tab => tab.id === tabId);
-    this.states[tabIndex] = 'removed';
+    this._states[tabIndex] = 'removed';
     this.changeDetectorRef.detectChanges();
   }
 
-  onCloseTabButtonClicked(tabId: number): void {
+  public onRemoveTabButtonClicked(tabId: number): void {
     if (this.data.tabs.length > 1) {
-      this.closeTab(tabId);
+      this.removeTab(tabId);
     } else {
-      this.onWindowClosed.emit(this.windowId);
+      this._onWindowRemoved.emit(this.windowId);
     }
   }
 
-  onCloseWindowButtonClicked(): void {
-    this.onWindowClosed.emit(this.windowId);
+  public onRemoveWindowButtonClicked(): void {
+    this._onWindowRemoved.emit(this.windowId);
   }
 
 }

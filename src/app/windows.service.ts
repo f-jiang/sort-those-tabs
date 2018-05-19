@@ -1,10 +1,11 @@
 /// <reference types="chrome"/>
 
 import { Injectable } from '@angular/core';
-import { getCopy } from './utils';
-import { Window } from './window';
 
 import ChromePromise from 'chrome-promise';
+
+import { Window } from './window';
+import { getCopy } from './utils';
 
 // TODO resolve workaround
 // temp workaround for buggy chromep api calls
@@ -26,20 +27,20 @@ export class WindowsService {
     );
   }
 
-  async init(): Promise<void> {
-    await this.loadData();
-  }
-
-  get data(): Window[] {
+  public get data(): Window[] {
     return getCopy(this._data);
   }
 
-  async loadData(): Promise<void> {
+  public async init(): Promise<void> {
+    await this.loadData();
+  }
+
+  public async loadData(): Promise<void> {
     this._data = await this.getAllWindows();
   }
 
   // TODO use set util functions such as intersection and difference
-  async update(editedWindows: Window[]): Promise<void> {
+  public async update(editedWindows: Window[]): Promise<void> {
     const originalWindowIds: Set<number> = new Set(this._data.map(win => win.id));
     const editedWindowIds: Set<number> = new Set(editedWindows.map(win => win.id));
 
@@ -70,7 +71,7 @@ export class WindowsService {
     const newWindows: Window[] = editedWindows.filter(win => newWindows_ids.has(win.id));
     for (const newWindow of newWindows) {
       const tabsToDetach_ids: number[] = newWindow.tabs.map(tab => tab.id);
-      const result: chrome.windows.Window = await chromep.windows.create({ tabId: tabsToDetach_ids[0] });
+      const result: chrome.windows.Window = await chromep.windows.create({tabId: tabsToDetach_ids[0]});
 
       // move additional detached tabs to new window
       if (tabsToDetach_ids.length > 1) {
@@ -162,7 +163,7 @@ export class WindowsService {
 
         // if tabIds is a subset of tabsToMove_ids, create a temporary tab
         if (intersection.length === tabIds.size) {
-          const result: chrome.tabs.Tab = await chromep.tabs.create({ windowId: +windowId });
+          const result: chrome.tabs.Tab = await chromep.tabs.create({windowId: +windowId});
           placeholderTabs_ids.push(result.id);
         }
 
@@ -171,7 +172,7 @@ export class WindowsService {
       }
 
       if (tabsToMove_ids.length > 0) {
-        await chromep.tabs.move(tabsToMove_ids, { index: -1, windowId: windowInCommon_id });
+        await chromep.tabs.move(tabsToMove_ids, {index: -1, windowId: windowInCommon_id});
       }
 
       // TODO resolve workaround
@@ -202,7 +203,6 @@ export class WindowsService {
       }
       // end workaround
 
-      // TODO untested
       // close tabs to be removed from window
 
       // tabs to be removed...
@@ -233,7 +233,7 @@ export class WindowsService {
       const targetSortOrder: number[] = Array.from(windowsInCommon_tabIdsMap_edited.get(windowInCommon_id));
 
       // buggy api call
-      // const editedWindow: Window = Window.fromChromeWindow(await chromep.windows.get(windowInCommon_id, { populate: true }));
+      // const editedWindow: Window = Window.fromChromeWindow(await chromep.windows.get(windowInCommon_id, {populate: true}));
       const editedWindow: Window = unsortedWindowsMap.get(windowInCommon_id);
 
       const currentTabIds: number[] = editedWindow.tabs.map(tab => tab.id);
@@ -253,8 +253,8 @@ export class WindowsService {
           let temp: number;
 
           // swap for the actual tabs; must occur before swapping for currentTabIds
-          await chromep.tabs.move(currentTabIds[i], { index: minIndex, windowId: windowInCommon_id });
-          await chromep.tabs.move(currentTabIds[minIndex], { index: i, windowId: windowInCommon_id });
+          await chromep.tabs.move(currentTabIds[i], {index: minIndex, windowId: windowInCommon_id});
+          await chromep.tabs.move(currentTabIds[minIndex], {index: i, windowId: windowInCommon_id});
 
           // swap for currentTabIds
           temp = currentTabIds[minIndex];

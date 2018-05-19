@@ -2,10 +2,10 @@ import { Tab } from './tab';
 
 export class Window {
 
-  id: number;
-  tabs: Tab[] = [];
+  public id: number;
+  public tabs: Tab[] = [];
 
-  static fromChromeWindow(chromeWindow: chrome.windows.Window): Window {
+  public static fromChromeWindow(chromeWindow: chrome.windows.Window): Window {
     return new WindowBuilder()
       .setId(chromeWindow.id)
       .setTabs(chromeWindow.tabs.map(chromeTab => Tab.fromChromeTab(chromeTab)))
@@ -22,17 +22,17 @@ export class WindowBuilder {
     this._window = new Window();
   }
 
-  setId(id: number): WindowBuilder {
+  public setId(id: number): WindowBuilder {
     this._window.id = id;
     return this;
   }
 
-  setTabs(tabs: Tab[]): WindowBuilder {
+  public setTabs(tabs: Tab[]): WindowBuilder {
     this._window.tabs = tabs;
     return this;
   }
 
-  build(): Window {
+  public build(): Window {
     return this._window;
   }
 

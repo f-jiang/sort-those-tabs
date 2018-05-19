@@ -11,10 +11,11 @@ import {
   QueryList,
   ViewChildren
 } from '@angular/core';
+
 import { SortingSessionService } from '../sorting-session.service';
 import { Window } from '../window';
 import { WindowComponent } from '../window/window.component';
-import { getExtensionTabId, getExtensionWindowId } from '../utils';
+import { getExtensionTabId } from '../utils';
 
 // TODO: states: array or map, and update function calls accordingly
 // TODO: remove unneeded calls to ChangeDetectorRef.detectChanges()
@@ -35,53 +36,53 @@ import { getExtensionTabId, getExtensionWindowId } from '../utils';
 })
 export class SortingSessionComponent implements OnInit, AfterViewInit {
 
-  static readonly windowRemovedState: string = 'removed';
-  static readonly windowActiveState: string = 'active';
+  private static readonly windowRemovedState: string = 'removed';
+  private static readonly windowActiveState: string = 'active';
 
   @ViewChildren(WindowComponent)
-  private windows: QueryList<WindowComponent>;
+  private _windows: QueryList<WindowComponent>;
 
-  private states: string[];
+  private _states: string[];
 
-  constructor(private sortingSessionService: SortingSessionService,
-              private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private _sortingSessionService: SortingSessionService,
+              private _changeDetectorRef: ChangeDetectorRef) { }
 
   private refreshStates(): void {
-    this.states = new Array(this.sortingSessionService.data.length);
-    this.states.fill(SortingSessionComponent.windowActiveState);
+    this._states = new Array(this._sortingSessionService.data.length);
+    this._states.fill(SortingSessionComponent.windowActiveState);
   }
 
   private addEmptyWindow(): void {
-    this.sortingSessionService.addWindow(new Window());
+    this._sortingSessionService.addWindow(new Window());
     this.refreshStates();
   }
 
-  private async onAnimationStateChange(event: any, windowId: number): Promise<void> {
-    if (event.fromState === SortingSessionComponent.windowActiveState &&
-        event.toState === SortingSessionComponent.windowRemovedState) {
-      await this.sortingSessionService.removeWindow(windowId);
-      this.refreshStates();
-      this.changeDetectorRef.detectChanges();
-    }
-  }
-
-  async ngOnInit(): Promise<void> {
-    await this.sortingSessionService.init();
+  public async ngOnInit(): Promise<void> {
+    await this._sortingSessionService.init();
     this.addEmptyWindow();
     this.refreshStates();
 
-    this.sortingSessionService.externalDataChange$.subscribe(() => {
-      this.changeDetectorRef.detectChanges();
+    this._sortingSessionService.externalDataChange$.subscribe(() => {
+      this._changeDetectorRef.detectChanges();
       this.addEmptyWindow();
     });
   }
 
-  ngAfterViewInit(): void {
-    this.windows.changes.subscribe(() => {});
+  public ngAfterViewInit(): void {
+    this._windows.changes.subscribe(() => { });
   }
 
-  onTabMoved(): void {
-    const windows: Window[] = this.sortingSessionService.data;
+  public async onAnimationStateChange(event: any, windowId: number): Promise<void> {
+    if (event.fromState === SortingSessionComponent.windowActiveState &&
+        event.toState === SortingSessionComponent.windowRemovedState) {
+      await this._sortingSessionService.removeWindow(windowId);
+      this.refreshStates();
+      this._changeDetectorRef.detectChanges();
+    }
+  }
+
+  public onTabMoved(): void {
+    const windows: Window[] = this._sortingSessionService.data;
 
     // remove any empty windows except for the last one
     for (let i = 0; i < windows.length - 1; ) {
@@ -98,45 +99,45 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     }
 
     // refresh the component
-    this.changeDetectorRef.detectChanges();
+    this._changeDetectorRef.detectChanges();
   }
 
-  onTabClosed(tabId: number): void {
-    this.sortingSessionService.removeTab(tabId);
-    this.changeDetectorRef.detectChanges();
+  public onTabRemoved(tabId: number): void {
+    this._sortingSessionService.removeTab(tabId);
+    this._changeDetectorRef.detectChanges();
   }
 
-  async onWindowClosed(windowId: number): Promise<void> {
-    const windowToClose: WindowComponent = this.windows.find(windowComponent => windowComponent.windowId === windowId);
+  public async onWindowRemoved(windowId: number): Promise<void> {
+    const windowToClose: WindowComponent = this._windows.find(windowComponent => windowComponent.windowId === windowId);
     const extensionTabId: number = await getExtensionTabId();
 
     if (windowToClose.tabIds.indexOf(extensionTabId) === -1) {
-      const removedIndex: number = this.sortingSessionService.data.findIndex(window => window.id === windowId);
-      this.states[removedIndex] = SortingSessionComponent.windowRemovedState;
+      const removedIndex: number = this._sortingSessionService.data.findIndex(window => window.id === windowId);
+      this._states[removedIndex] = SortingSessionComponent.windowRemovedState;
       // remainder of window removal occurs in the animation callback this.onAnimationStateChange()
     // if window contains extension tab, then close the other tabs but not the window
     } else {
       for (const tabId of windowToClose.tabIds) {
         if (tabId !== extensionTabId) {
-          windowToClose.closeTab(tabId);
+          windowToClose.removeTab(tabId);
         }
       }
     }
 
-    this.changeDetectorRef.detectChanges();
+    this._changeDetectorRef.detectChanges();
   }
 
-  resetChanges(): void {
-    this.sortingSessionService.resetChanges();
+  public resetChanges(): void {
+    this._sortingSessionService.resetChanges();
     this.addEmptyWindow();
-    this.changeDetectorRef.detectChanges();
+    this._changeDetectorRef.detectChanges();
     this.refreshStates();
   }
 
-  async applyChanges(): Promise<void> {
-    await this.sortingSessionService.applyChanges();
+  public async applyChanges(): Promise<void> {
+    await this._sortingSessionService.applyChanges();
     this.addEmptyWindow();
-    this.changeDetectorRef.detectChanges();
+    this._changeDetectorRef.detectChanges();
     this.refreshStates();
   }
 

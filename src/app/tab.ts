@@ -1,13 +1,13 @@
 export class Tab {
 
-  id: number;
-  index: number;
-  windowId: number;
-  url: string;
-  title: string;
-  favIconUrl: string;
+  public id: number;
+  public index: number;
+  public windowId: number;
+  public url: string;
+  public title: string;
+  public favIconUrl: string;
 
-  static fromChromeTab(chromeTab: chrome.tabs.Tab): Tab {
+  public static fromChromeTab(chromeTab: chrome.tabs.Tab): Tab {
     return new TabBuilder()
       .setId(chromeTab.id)
       .setIndex(chromeTab.index)
@@ -28,37 +28,37 @@ export class TabBuilder {
     this._tab = new Tab();
   }
 
-  setId(id: number): TabBuilder {
+  public setId(id: number): TabBuilder {
     this._tab.id = id;
     return this;
   }
 
-  setIndex(index: number): TabBuilder {
+  public setIndex(index: number): TabBuilder {
     this._tab.index = index;
     return this;
   }
 
-  setWindowId(windowId: number): TabBuilder {
+  public setWindowId(windowId: number): TabBuilder {
     this._tab.windowId = windowId;
     return this;
   }
 
-  setUrl(url: string): TabBuilder {
+  public setUrl(url: string): TabBuilder {
     this._tab.url = url;
     return this;
   }
 
-  setTitle(title: string): TabBuilder {
+  public setTitle(title: string): TabBuilder {
     this._tab.title = title;
     return this;
   }
 
-  setFavIconUrl(favIconUrl: string): TabBuilder {
+  public setFavIconUrl(favIconUrl: string): TabBuilder {
     this._tab.favIconUrl = favIconUrl;
     return this;
   }
 
-  build(): Tab {
+  public build(): Tab {
     return this._tab;
   }
 

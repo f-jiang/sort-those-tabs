@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
-import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
-import { WindowsService } from './windows.service';
-import { Window } from './window';
+
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
+
+import { Window } from './window';
+import { WindowsService } from './windows.service';
+import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
 
 @Injectable()
 export class SortingSessionService {
@@ -13,26 +15,13 @@ export class SortingSessionService {
   private _externalDataChangeSource: Subject<void> = new Subject<void>();
   public externalDataChange$: Observable<void> = this._externalDataChangeSource.asObservable();
 
-  constructor(private windowsService: WindowsService) {
+  constructor(private _windowsService: WindowsService) {
     this.addExternalChangeListeners();
-  }
-
-  async init(): Promise<void> {
-    await this.windowsService.init();
-    this.loadData();
-  }
-
-  get data(): Window[] {
-    return this._data;
-  }
-
-  private loadData(): void {
-    this._data = this.windowsService.data;
   }
 
   // use function expression so that this evaluates to the SortingSessionService instance
   private _onExternalDataChange: (() => Promise<void>) = async () => {
-    await this.windowsService.loadData();
+    await this._windowsService.loadData();
     this.loadData();
     this._externalDataChangeSource.next();
   };
@@ -57,7 +46,20 @@ export class SortingSessionService {
     chrome.tabs.onRemoved.removeListener(this._onExternalDataChange);
   }
 
-  async applyChanges(): Promise<void> {
+  private loadData(): void {
+    this._data = this._windowsService.data;
+  }
+
+  public get data(): Window[] {
+    return this._data;
+  }
+
+  public async init(): Promise<void> {
+    await this._windowsService.init();
+    this.loadData();
+  }
+
+  public async applyChanges(): Promise<void> {
     this.removeExternalChangeListeners();
 
     // remove any empty windows
@@ -69,7 +71,7 @@ export class SortingSessionService {
       }
     }
 
-    await this.windowsService.update(this._data);
+    await this._windowsService.update(this._data);
     this.loadData();
 
     // keep extension in focus
@@ -79,15 +81,15 @@ export class SortingSessionService {
     this.addExternalChangeListeners();
   }
 
-  resetChanges(): void {
+  public resetChanges(): void {
     this.loadData();
   }
 
-  addWindow(window: Window): void {
+  public addWindow(window: Window): void {
     this._data.push(window);
   }
 
-  async removeWindow(windowId: number): Promise<void> {
+  public async removeWindow(windowId: number): Promise<void> {
     const windowToRemove_index: number = this._data.findIndex(window => window.id === windowId);
 
     if (windowToRemove_index !== -1) {
@@ -105,7 +107,7 @@ export class SortingSessionService {
     }
   }
 
-  removeTab(tabId: number): void {
+  public removeTab(tabId: number): void {
     for (const window of this._data) {
       const tabIndex: number = window.tabs.findIndex(tab => tab.id === tabId);
 

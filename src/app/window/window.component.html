@@ -2,8 +2,8 @@
   <!--hide the header if this is an empty window-->
   <div *ngIf="data.tabs.length !== 0" class="window-header">
     <button class="close-window-button"
-           title="Close this window"
-           (click)="onCloseWindowButtonClicked()">
+            title="Close this window"
+            (click)="onRemoveWindowButtonClicked()">
       <i class="fa fa-close"></i>
     </button>
   </div>
@@ -14,7 +14,7 @@
       <div class="tab-box"
            [class.extension-tab-box]="tab.title === 'Sort those Tabs'"
            *ngFor="let tab of data.tabs; let i = index"
-           [@removal]="states[i]"
+           [@removal]="_states[i]"
            (@removal.done)="onAnimationStateChange($event, tab.id)">
         <!--title 'Sort those Tabs' defined in index.html-->
         <div class="tab-header absolute" [class.extension-tab-header]="tab.title === 'Sort those Tabs'">
@@ -30,7 +30,7 @@
           <button *ngIf="tab.title !== 'Sort those Tabs'"
                  class="close-tab-button"
                  title="Close this tab"
-                 (click)="onCloseTabButtonClicked(tab.id)">
+                 (click)="onRemoveTabButtonClicked(tab.id)">
             <i class="fa fa-close"></i>
           </button>
         </div>
