@@ -12,16 +12,16 @@ Organizing your Chrome tabs in a large, multi-window browsing session can be a p
 
 ### Release Version
 
-Release versions can be downloaded from the Chrome Web Store.
+Release versions can be downloaded from the [Chrome Web Store](https://chrome.google.com/webstore/detail/sort-those-tabs/hkpcnabklhpajnjmmfmnpihcjjkojjpg).
 
 ### Development Releases
 
 - `git clone` this repo or download as ZIP
-- To install dependencies, `cd` into the local repo and execute the following:
+- `cd` into the local repo and execute the following:
 
 ```
-$ sudo npm install
-$ ng build
+$ sudo npm install    # install dependencies
+$ ng build            # build
 ```
 
 - Finally, load the newly created `dist` directory as an unpacked extension in Google Chrome
