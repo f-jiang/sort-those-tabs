@@ -10,6 +10,11 @@
             (click)="sortingSession.onAllTabsSortedByTitle()">
       <i class="fa fa-sort-alpha-asc"></i>
     </button>
+    <button class="button"
+            title="Remove all duplicate tabs"
+            (click)="sortingSession.onAllDuplicateTabsRemoved()">
+      <i class="fa fa-clone"></i>
+    </button>
   </div>
   <div class="right-children">
     <button class="button" (click)="sortingSession.applyChanges()">APPLY</button>

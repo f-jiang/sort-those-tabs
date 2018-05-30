@@ -142,4 +142,22 @@ export class SortingSessionService {
     }
   }
 
+  public removeDuplicateTabs(windowId: number): void {
+    const windowToDeduplicate: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToDeduplicate != null) {
+      const tabIdsSet: Set<string> = new Set();
+
+      windowToDeduplicate.tabs = windowToDeduplicate.tabs.filter((tab): boolean => {
+        const isTabUnique: boolean = !tabIdsSet.has(tab.url);
+
+        if (isTabUnique) {
+          tabIdsSet.add(tab.url);
+        }
+
+        return isTabUnique;
+      });
+    }
+  }
+
 }

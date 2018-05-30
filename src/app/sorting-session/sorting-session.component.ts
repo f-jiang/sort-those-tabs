@@ -127,6 +127,16 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public onDuplicateTabsRemoved(windowId: number): void {
+    this.sortingSessionService.removeDuplicateTabs(windowId);
+  }
+  
+  public onAllDuplicateTabsRemoved(): void {
+    for (const window of this.sortingSessionService.data) {
+      this.sortingSessionService.removeDuplicateTabs(window.id);
+    }
+  }
+
   public async onWindowRemoved(windowId: number): Promise<void> {
     const windowToClose: WindowComponent = this._windows.find(windowComponent => windowComponent.windowId === windowId);
     const extensionTabId: number = await getExtensionTabId();
