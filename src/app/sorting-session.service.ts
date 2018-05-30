@@ -148,7 +148,7 @@ export class SortingSessionService {
     if (windowToDeduplicate != null) {
       const tabIdsSet: Set<string> = new Set();
 
-      windowToDeduplicate.tabs = windowToDeduplicate.tabs.filter((tab): boolean => {
+      windowToDeduplicate.tabs = windowToDeduplicate.tabs.filter((tab: Tab): boolean => {
         const isTabUnique: boolean = !tabIdsSet.has(tab.url);
 
         if (isTabUnique) {
