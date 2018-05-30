@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 
 import { SortingSessionService } from '../sorting-session.service';
+import { TabFocuserService } from '../tab-focuser.service';
 import { Window } from '../window';
 import { WindowComponent } from '../window/window.component';
 import { getExtensionTabId } from '../utils';
@@ -45,6 +46,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   private _states: string[];
 
   constructor(public sortingSessionService: SortingSessionService,
+              private _tabFocuserService: TabFocuserService,
               private _changeDetectorRef: ChangeDetectorRef) { }
 
   private refreshStates(): void {
@@ -130,7 +132,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   public onDuplicateTabsRemoved(windowId: number): void {
     this.sortingSessionService.removeDuplicateTabs(windowId);
   }
-  
+
   public onAllDuplicateTabsRemoved(): void {
     for (const window of this.sortingSessionService.data) {
       this.sortingSessionService.removeDuplicateTabs(window.id);
@@ -155,6 +157,10 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     }
 
     this._changeDetectorRef.detectChanges();
+  }
+
+  public async onTabClicked(tabId: number): Promise<void> {
+    await this._tabFocuserService.focusTab(tabId);
   }
 
   public resetChanges(): void {

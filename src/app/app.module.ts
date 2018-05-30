@@ -7,6 +7,7 @@ import { UrlParser } from './url/url-parser';
 
 import { WindowsService } from './windows.service';
 import { SortingSessionService } from './sorting-session.service';
+import { TabFocuserService } from './tab-focuser.service';
 
 import { AppComponent } from './app.component';
 import { SortingSessionComponent } from './sorting-session/sorting-session.component';
@@ -26,6 +27,7 @@ import { WindowComponent } from './window/window.component';
   providers: [
     WindowsService,
     SortingSessionService,
+    TabFocuserService,
     UrlParser
   ],
   bootstrap: [AppComponent]

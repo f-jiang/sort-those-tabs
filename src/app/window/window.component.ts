@@ -48,6 +48,8 @@ export class WindowComponent implements OnInit {
   private _onDuplicateTabsRemoved: EventEmitter<number> = new EventEmitter<number>();
   @Output()
   private _onWindowRemoved: EventEmitter<number> = new EventEmitter<number>();
+  @Output()
+  private _onTabClicked: EventEmitter<number> = new EventEmitter<number>();
 
   private _states: string[];
 
@@ -123,6 +125,10 @@ export class WindowComponent implements OnInit {
 
   public onRemoveWindowButtonClicked(): void {
     this._onWindowRemoved.emit(this.windowId);
+  }
+
+  public onTabClicked(tabId: number): void {
+    this._onTabClicked.emit(tabId);
   }
 
 }
