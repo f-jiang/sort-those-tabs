@@ -39,6 +39,11 @@ export class WindowComponent implements OnInit {
   private _onTabMoved: EventEmitter<void> = new EventEmitter<void>();
   @Output()
   private _onTabRemoved: EventEmitter<number> = new EventEmitter<number>();
+
+  @Output()
+  private _onTabsSortedByDomainName: EventEmitter<number> = new EventEmitter<number>();
+  @Output()
+  private _onTabsSortedByTitle: EventEmitter<number> = new EventEmitter<number>();
   @Output()
   private _onWindowRemoved: EventEmitter<number> = new EventEmitter<number>();
 
@@ -100,6 +105,14 @@ export class WindowComponent implements OnInit {
     } else {
       this._onWindowRemoved.emit(this.windowId);
     }
+  }
+
+  public onSortTabsByDomainNameButtonClicked(): void {
+    this._onTabsSortedByDomainName.emit(this.windowId);
+  }
+
+  public onSortTabsByTitleButtonClicked(): void {
+    this._onTabsSortedByTitle.emit(this.windowId);
   }
 
   public onRemoveWindowButtonClicked(): void {

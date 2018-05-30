@@ -107,6 +107,26 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     this._changeDetectorRef.detectChanges();
   }
 
+  public onTabsSortedByDomainName(windowId: number): void {
+    this.sortingSessionService.sortTabsByDomainName(windowId);
+  }
+
+  public onAllTabsSortedByDomainName(): void {
+    for (const window of this.sortingSessionService.data) {
+      this.sortingSessionService.sortTabsByDomainName(window.id);
+    }
+  }
+
+  public onTabsSortedByTitle(windowId: number): void {
+    this.sortingSessionService.sortTabsByTitle(windowId);
+  }
+
+  public onAllTabsSortedByTitle(): void {
+    for (const window of this.sortingSessionService.data) {
+      this.sortingSessionService.sortTabsByTitle(window.id);
+    }
+  }
+
   public async onWindowRemoved(windowId: number): Promise<void> {
     const windowToClose: WindowComponent = this._windows.find(windowComponent => windowComponent.windowId === windowId);
     const extensionTabId: number = await getExtensionTabId();

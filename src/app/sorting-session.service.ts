@@ -3,7 +3,10 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 
+import { UrlParser } from './url/url-parser';
+
 import { Window } from './window';
+import { Tab } from './tab';
 import { WindowsService } from './windows.service';
 import { focusExtensionWindow, focusExtensionTab, getExtensionTabId } from './utils';
 
@@ -15,7 +18,7 @@ export class SortingSessionService {
   private _externalDataChangeSource: Subject<void> = new Subject<void>();
   public externalDataChange$: Observable<void> = this._externalDataChangeSource.asObservable();
 
-  constructor(private _windowsService: WindowsService) {
+  constructor(private _windowsService: WindowsService, private _urlParser: UrlParser) {
     this.addExternalChangeListeners();
   }
 
@@ -115,6 +118,32 @@ export class SortingSessionService {
         window.tabs.splice(tabIndex, 1);
         break;
       }
+    }
+  }
+
+  public sortTabsByDomainName(windowId: number): void {
+    const windowToSort: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToSort != null) {
+      const domainNameRegex: RegExp = new RegExp('[\\w-]+\.\\w+$');
+
+      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
+        const hostnameA: string = this._urlParser.parse(a.url, false).hostname;
+        const hostnameB: string = this._urlParser.parse(b.url, false).hostname;
+        const domainNameA: string = hostnameA.match(domainNameRegex)[0];
+        const domainNameB: string = hostnameB.match(domainNameRegex)[0];
+        return domainNameA.localeCompare(domainNameB);
+      });
+    }
+  }
+
+  public sortTabsByTitle(windowId: number): void {
+    const windowToSort: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToSort != null) {
+      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
+        return a.title.localeCompare(b.title);
+      });
     }
   }
 

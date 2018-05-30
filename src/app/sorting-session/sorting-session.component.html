@@ -6,6 +6,8 @@
     <app-window [data]="window"
                 (_onTabMoved)="onTabMoved()"
                 (_onTabRemoved)="onTabRemoved($event)"
+                (_onTabsSortedByDomainName)="onTabsSortedByDomainName($event)"
+                (_onTabsSortedByTitle)="onTabsSortedByTitle($event)"
                 (_onWindowRemoved)="onWindowRemoved($event)"></app-window>
   </div>
 </div>

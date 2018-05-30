@@ -4,6 +4,30 @@ body {
   background-color: #eef3f3;
 }
 
+.left-right-children-parent {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.left-children {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.right-children {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }

@@ -1,11 +1,25 @@
 <div class="container">
   <!--hide the header if this is an empty window-->
-  <div *ngIf="data.tabs.length !== 0" class="window-header">
-    <button class="close-window-button"
-            title="Close this window"
-            (click)="onRemoveWindowButtonClicked()">
-      <i class="fa fa-close"></i>
-    </button>
+  <div *ngIf="data.tabs.length !== 0" class="window-header left-right-children-parent">
+    <div class="left-children">
+      <button class="window-header-button"
+              title="Sort this window's tabs by domain name"
+              (click)="onSortTabsByDomainNameButtonClicked()">
+        <i class="fa fa-sort-amount-desc"></i>
+      </button>
+      <button class="window-header-button"
+              title="Sort this window's tabs by title"
+              (click)="onSortTabsByTitleButtonClicked()">
+        <i class="fa fa-sort-alpha-asc"></i>
+      </button>
+    </div>
+    <div class="right-children">
+      <button class="window-header-button"
+              title="Close this window"
+              (click)="onRemoveWindowButtonClicked()">
+        <i class="fa fa-close"></i>
+      </button>
+    </div>
   </div>
 
   <div class="window-body">

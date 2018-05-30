@@ -1,6 +1,20 @@
-<div class="top-menu container">
-  <button class="button" (click)="sortingSession.applyChanges()">APPLY</button>
-  <button class="button" (click)="sortingSession.resetChanges()">RESET</button>
+<div class="top-menu left-right-children-parent">
+  <div class="left-children">
+    <button class="button"
+            title="Sort all windows' tabs by domain name"
+            (click)="sortingSession.onAllTabsSortedByDomainName()">
+      <i class="fa fa-sort-amount-desc"></i>
+    </button>
+    <button class="button"
+            title="Sort all windows' tabs by title"
+            (click)="sortingSession.onAllTabsSortedByTitle()">
+      <i class="fa fa-sort-alpha-asc"></i>
+    </button>
+  </div>
+  <div class="right-children">
+    <button class="button" (click)="sortingSession.applyChanges()">APPLY</button>
+    <button class="button" (click)="sortingSession.resetChanges()">RESET</button>
+  </div>
 </div>
 
 <div class="main-content">

@@ -13,13 +13,7 @@
   box-shadow: 0px 1px 2px 2px #ccc;
 }
 
-.container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.container > * {
+.top-menu > div > * {
   margin-right: 5px;
 }
 

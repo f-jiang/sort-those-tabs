@@ -7,12 +7,6 @@
 }
 
 .window-header {
-  flex-shrink: 0;
-
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-
   /*on top of everything except for top-menu*/
   z-index: 999;
 
@@ -22,7 +16,11 @@
   box-shadow: 0 1px 1px 1px #ccc;
 }
 
-.close-window-button {
+.left-children > * {
+  margin-right: 3px;
+}
+
+.window-header-button {
   border: none;
   color: #666576;
   cursor: pointer;
@@ -30,7 +28,7 @@
   background-color: #ccc;
 }
 
-.close-window-button:hover {
+.window-header-button:hover {
   background-color: #d6d6d6;
 }
 
