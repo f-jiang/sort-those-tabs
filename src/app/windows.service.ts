@@ -21,7 +21,7 @@ export class WindowsService {
 
   private async getAllWindows(): Promise<Window[]> {
     return await chromep.windows.getAll({'populate': true}).then(
-      (chromeWindows: chrome.windows.Window[]) => {
+      (chromeWindows: chrome.windows.Window[]): Window[] => {
         return chromeWindows.map(chromeWindow => Window.fromChromeWindow(chromeWindow));
       }
     );

@@ -62,7 +62,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
     this.addEmptyWindow();
     this.refreshStates();
 
-    this.sortingSessionService.externalDataChange$.subscribe(() => {
+    this.sortingSessionService.externalDataChange$.subscribe((): void => {
       this._changeDetectorRef.detectChanges();
       this.addEmptyWindow();
     });
