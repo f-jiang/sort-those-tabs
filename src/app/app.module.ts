@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
+import { UrlParser } from './url/url-parser';
+
 import { AppComponent } from './app.component';
 import { SortingSessionComponent } from './sorting-session/sorting-session.component';
 
@@ -24,7 +26,8 @@ import { SortingSessionService } from './sorting-session.service';
   ],
   providers: [
     WindowsService,
-    SortingSessionService
+    SortingSessionService,
+    UrlParser
   ],
   bootstrap: [AppComponent]
 })
