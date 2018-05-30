@@ -66,14 +66,9 @@ export class SortingSessionService {
     this.removeExternalChangeListeners();
 
     // remove any empty windows
-    for (let i = 0; i < this._data.length; ) {
-      if (this._data[i].tabs.length === 0) {
-        this._data.splice(i, 1);
-      } else {
-        i++;
-      }
-    }
+    this._data = this._data.filter(window => window.tabs.length > 0);
 
+    // edit chrome session
     await this._windowsService.update(this._data);
     this.loadData();
 
