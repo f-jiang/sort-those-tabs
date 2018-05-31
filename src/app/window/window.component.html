@@ -50,7 +50,7 @@
           <button *ngIf="tab.title !== 'Sort those Tabs'"
                  class="close-tab-button"
                  title="Close this tab"
-                 (click)="onRemoveTabButtonClicked(tab.id)">
+                 (click)="onRemoveTabButtonClicked(tab.id, $event)">
             <i class="fa fa-close"></i>
           </button>
         </div>

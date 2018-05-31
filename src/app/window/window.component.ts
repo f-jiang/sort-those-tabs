@@ -103,7 +103,9 @@ export class WindowComponent implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  public onRemoveTabButtonClicked(tabId: number): void {
+  public onRemoveTabButtonClicked(tabId: number, event: MouseEvent): void {
+    event.stopPropagation();  // prevent click from registering on parent tab-box
+
     if (this.data.tabs.length > 1) {
       this.removeTab(tabId);
     } else {
