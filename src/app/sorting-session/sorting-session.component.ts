@@ -114,9 +114,7 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   }
 
   public onAllTabsSortedByDomainName(): void {
-    for (const window of this.sortingSessionService.data) {
-      this.sortingSessionService.sortTabsByDomainName(window.id);
-    }
+    this.sortingSessionService.sortAllTabsByDomainName();
   }
 
   public onTabsSortedByTitle(windowId: number): void {
@@ -124,18 +122,19 @@ export class SortingSessionComponent implements OnInit, AfterViewInit {
   }
 
   public onAllTabsSortedByTitle(): void {
-    for (const window of this.sortingSessionService.data) {
-      this.sortingSessionService.sortTabsByTitle(window.id);
-    }
+    this.sortingSessionService.sortAllTabsByTitle();
   }
 
   public onDuplicateTabsRemoved(windowId: number): void {
     this.sortingSessionService.removeDuplicateTabs(windowId);
   }
 
-  public onAllDuplicateTabsRemoved(): void {
-    for (const window of this.sortingSessionService.data) {
-      this.sortingSessionService.removeDuplicateTabs(window.id);
+  public async onAllDuplicateTabsRemoved(): Promise<void> {
+    await this.sortingSessionService.removeAllDuplicateTabs();
+
+    const lastWindow: Window = this.sortingSessionService.data[this.sortingSessionService.data.length - 1];
+    if (lastWindow.tabs.length !== 0) {
+      this.addEmptyWindow();
     }
   }
 

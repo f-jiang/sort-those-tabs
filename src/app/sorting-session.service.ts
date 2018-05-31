@@ -53,6 +53,48 @@ export class SortingSessionService {
     this._data = this._windowsService.data;
   }
 
+  private sortTabsByDomainNameInternal(windowId: number): void {
+    const windowToSort: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToSort != null) {
+      const domainNameRegex: RegExp = new RegExp('[\\w-]+\.\\w+$');
+
+      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
+        const hostnameA: string = this._urlParser.parse(a.url, false).hostname;
+        const hostnameB: string = this._urlParser.parse(b.url, false).hostname;
+        const domainNameA: string = hostnameA.match(domainNameRegex)[0];
+        const domainNameB: string = hostnameB.match(domainNameRegex)[0];
+        return domainNameA.localeCompare(domainNameB);
+      });
+    }
+  }
+
+  private sortTabsByTitleInternal(windowId: number): void {
+    const windowToSort: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToSort != null) {
+      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
+        return a.title.localeCompare(b.title);
+      });
+    }
+  }
+
+  private removeDuplicateTabsInternal(windowId: number, tabUrlsSet: Set<string> = new Set()) {
+    const windowToDeduplicate: Window = this._data.find(window => window.id === windowId);
+
+    if (windowToDeduplicate != null) {
+      windowToDeduplicate.tabs = windowToDeduplicate.tabs.filter((tab: Tab): boolean => {
+        const isTabUnique: boolean = !tabUrlsSet.has(tab.url);
+
+        if (isTabUnique) {
+          tabUrlsSet.add(tab.url);
+        }
+
+        return isTabUnique;
+      });
+    }
+  }
+
   public get data(): Window[] {
     return this._data;
   }
@@ -117,46 +159,42 @@ export class SortingSessionService {
   }
 
   public sortTabsByDomainName(windowId: number): void {
-    const windowToSort: Window = this._data.find(window => window.id === windowId);
+    this.sortTabsByDomainNameInternal(windowId);
+  }
 
-    if (windowToSort != null) {
-      const domainNameRegex: RegExp = new RegExp('[\\w-]+\.\\w+$');
-
-      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
-        const hostnameA: string = this._urlParser.parse(a.url, false).hostname;
-        const hostnameB: string = this._urlParser.parse(b.url, false).hostname;
-        const domainNameA: string = hostnameA.match(domainNameRegex)[0];
-        const domainNameB: string = hostnameB.match(domainNameRegex)[0];
-        return domainNameA.localeCompare(domainNameB);
-      });
+  public sortAllTabsByDomainName(): void {
+    for (const window of this._data) {
+      this.sortTabsByDomainNameInternal(window.id);
     }
   }
 
   public sortTabsByTitle(windowId: number): void {
-    const windowToSort: Window = this._data.find(window => window.id === windowId);
+    this.sortTabsByTitleInternal(windowId);
+  }
 
-    if (windowToSort != null) {
-      windowToSort.tabs.sort((a: Tab, b: Tab): number => {
-        return a.title.localeCompare(b.title);
-      });
+  public sortAllTabsByTitle(): void {
+    for (const window of this._data) {
+      this.sortTabsByTitleInternal(window.id);
     }
   }
 
   public removeDuplicateTabs(windowId: number): void {
-    const windowToDeduplicate: Window = this._data.find(window => window.id === windowId);
+    this.removeDuplicateTabsInternal(windowId);
+  }
 
-    if (windowToDeduplicate != null) {
-      const tabIdsSet: Set<string> = new Set();
+  public async removeAllDuplicateTabs(): Promise<void> {
+    const tabUrlsSet: Set<string> = new Set();
 
-      windowToDeduplicate.tabs = windowToDeduplicate.tabs.filter((tab: Tab): boolean => {
-        const isTabUnique: boolean = !tabIdsSet.has(tab.url);
+    for (const window of this._data) {
+      this.removeDuplicateTabsInternal(window.id, tabUrlsSet);
+    }
 
-        if (isTabUnique) {
-          tabIdsSet.add(tab.url);
-        }
-
-        return isTabUnique;
-      });
+    for (let i = 0; i < this._data.length; ) {
+      if (this._data[i].tabs.length === 0) {
+        await this.removeWindow(this.data[i].id);
+      } else {
+        i++;
+      }
     }
   }
 
