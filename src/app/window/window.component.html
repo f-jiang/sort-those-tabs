@@ -5,24 +5,24 @@
       <button class="window-header-button"
               title="Sort tabs by domain name"
               (click)="onSortTabsByDomainNameButtonClicked()">
-        <i class="fa fa-sort-amount-desc"></i>
+        <i class="fas fa-sort-amount-down"></i>
       </button>
       <button class="window-header-button"
               title="Sort tabs by title"
               (click)="onSortTabsByTitleButtonClicked()">
-        <i class="fa fa-sort-alpha-asc"></i>
+        <i class="fas fa-sort-alpha-down"></i>
       </button>
       <button class="window-header-button"
               title="Remove duplicate tabs"
               (click)="onRemoveDuplicateTabsButtonClicked()">
-        <i class="fa fa-clone"></i>
+        <i class="far fa-clone"></i>
       </button>
     </div>
     <div class="right-children">
       <button class="window-header-button"
               title="Close window"
               (click)="onRemoveWindowButtonClicked()">
-        <i class="fa fa-close"></i>
+        <i class="fas fa-times"></i>
       </button>
     </div>
   </div>
@@ -51,7 +51,7 @@
                  class="close-tab-button"
                  title="Close this tab"
                  (click)="onRemoveTabButtonClicked(tab.id, $event)">
-            <i class="fa fa-close"></i>
+            <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="tab-body">
