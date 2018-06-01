@@ -6,6 +6,8 @@ Organizing your Chrome tabs in a large, multi-window browsing session can be a p
 
 - Access all your Chrome windows and tabs from the same page
 - Easily close, transfer, and re-order your Chrome tabs and windows
+- Automatically sort tabs by title or domain name
+- Automatically remove duplicate tabs
 - Apply or reset your changes with the click of a button
 
 ## Installation
@@ -30,6 +32,7 @@ $ ng build            # build
 
 - [Angular](https://angular.io/)
 - [chrome-promise](https://github.com/tfoxy/chrome-promise)
+- [Font Awesome](https://fontawesome.com/)
 
 ## Authors
 
